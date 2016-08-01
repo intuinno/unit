@@ -1,27 +1,23 @@
-var data = [4, 8, 15, 16, 23, 42];
+var spec_path = 'data/titanic_spec.json';
 
-var width = 420,
-    barHeight = 20;
+d3.json(spec_path, function(error, data) {
 
-var x = d3.scaleLinear()
-    .domain([0, d3.max(data)])
-    .range([0, width]);
+  console.log(data);
 
-var chart = d3.select(".chart")
-    .attr("width", width)
-    .attr("height", barHeight * data.length);
+  d3.csv(data.data, function(error, csv_data) {
 
-var bar = chart.selectAll("g")
-    .data(data)
-  .enter().append("g")
-    .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+    console.log(csv_data);
 
-bar.append("rect")
-    .attr("width", x)
-    .attr("height", barHeight - 1);
+    rootContainer = build_Container(csv_data, data.width, data.height, 0, 0);
 
-bar.append("text")
-    .attr("x", function(d) { return x(d) - 3; })
-    .attr("y", barHeight / 2)
-    .attr("dy", ".35em")
-    .text(function(d) { return d; });
+    var tempContainer = rootContainer;
+    data.layouts.forEach(function(layout) {
+      tempContainer = tempContainer.applyLayout(layout);
+    });
+
+    leafContainer = tempContainer;
+
+    leafContainer.drawUnit(data.mark);
+
+  })
+})

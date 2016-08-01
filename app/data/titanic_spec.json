@@ -1,0 +1,35 @@
+{
+  "title" : "Titanic",
+  "data": "data/titanic.csv",
+  "width": 640,
+  "height": 480,
+  "layouts": [
+    {
+      "name": "layout1",
+      "type": "gridxy",
+      "groupby": "class",
+      "aspect_raio":"fillX",
+      "size": "uniform",
+      "direction": "LRBT",
+      "align": "LB",
+      "margin": 5,
+      "padding": 5
+    },
+    {
+      "name": "layout2",
+      "type": "gridxy",
+      "groupby": "id",
+      "aspect_raio":"square",
+      "size": "uniform",
+      "direction": "LRBT",
+      "align": "LB",
+      "margin": 5,
+      "padding": 5
+    }
+  ],
+  "mark": {
+    "shape": "circle",
+    "color": "survival",
+    "size": "max"
+  }
+}

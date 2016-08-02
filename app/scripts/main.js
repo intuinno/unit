@@ -15,8 +15,8 @@ d3.json(spec_path, function(error, spec) {
     myContainer.visualspace = {
                               'width': spec.width,
                               'height': spec.height,
-                              'posX': spec.posX,
-                              'poY': spec.posY,
+                              'posX': 0,
+                              'posY': 0,
                             };
 
     spec.layouts.forEach(function(layout) {
@@ -51,24 +51,77 @@ function emptyContainersFromKeys(data, groupby) {
               });
 }
 
-function makeContainersUsingSharedScale(data, groupby) {
+function makeContainersUsingSharedScale(data, container, layout) {
+  var groupby = layout.groupby;
   var newContainers= emptyContainersFromKeys(data, groupby);
 
-  newContainers.forEach(function(c) {
+  newContainers.forEach(function(c,i,all) {
     c.contents = data.filter(function(d) {
       return d[groupby] === c.label;
     });
   });
 
+  calcVisualSpace(container, newContainers, layout);
+
   return newContainers;
 }
 
-function makeContainersUsingIsolatedScale(data, groupby) {
+function calcVisualSpace(parentContainer, childContainers, layout) {
+  switch(layout.type) {
+    case 'gridxy':
+      console.log('gridxy');
+      calcGridxyVisualSpace(parentContainer, childContainers, layout);
+      break;
+    default:
+      console.log("Unsupported Layout type");
+      break;
+  }
+}
+
+function calcGridxyVisualSpace(parentContainer, childContainers, layout) {
+  switch(layout.aspect_ratio) {
+    case "fillX":
+    case "fillY":
+      calcFillGridxyVisualSpace(parentContainer, childContainers, layout);
+      break;
+    case "square":
+    case "parent":
+    case "custom":
+      calcPackGridxyVisualSpace(parentContainer, childContainers,layout)
+  }
+}
+
+function calcFillGridxyVisualSpace(parentContainer, childContainers,layout) {
+
+  var parentVisualSpace = parentContainer.visualspace;
+
+  if (layout.aspect_ratio === 'fillX') {
+    childContainers.forEach(function(c,i,all) {
+      c.visualspace.width = (1.0*parentVisualSpace.width)/all.length;
+      c.visualspace.height = parentVisualSpace.height;
+      c.visualspace.posX = i * c.visualspace.width;
+      c.visualspace.posY = parentVisualSpace.posY;
+    });
+  } else {
+    console.log("TODO");
+  }
+
+}
+
+function calcPackGridxyVisualSpace(parentContainer, childContainers,layout) {
+
+  console.log("TODO");
+
+}
+
+function makeContainersUsingIsolatedScale(data, container, layout) {
+
+  var groupby = layout.groupby;
   var myNest = d3.nest()
                   .key(function(d) {return d[groupby]})
                   .entries(data);
 
-  return myNest.map(function(d) {
+  var newContainers =  myNest.map(function(d) {
     return {
       'contents':d.values,
       'isContentsContainers':true,
@@ -76,6 +129,10 @@ function makeContainersUsingIsolatedScale(data, groupby) {
       'visualspace': {}
     };
   });
+
+  calcVisualSpace(container, newContainers, layout);
+
+  return newContainers;
 }
 
 function applyLayout(data,container, layout) {
@@ -87,19 +144,19 @@ function applyLayout(data,container, layout) {
     });
   } else {
 
-    groupbyData(data, container, layout);
+    splitContainers(data, container, layout);
 
   }
 
 }
 
-function groupbyData(data, container, layout) {
+function splitContainers(data, container, layout) {
   var newContainers;
 
   if (layout.isScaleShared) {
-    newContainers = makeContainersUsingSharedScale(data, layout.groupby);
+    newContainers = makeContainersUsingSharedScale(data, container, layout);
   } else {
-    newContainers = makeContainersUsingIsolatedScale(container.contents, layout.groupby);
+    newContainers = makeContainersUsingIsolatedScale(container.contents, container, layout);
   }
   container.contents = newContainers;
   container.isContentsContainers = true;

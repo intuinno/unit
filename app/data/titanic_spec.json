@@ -7,13 +7,14 @@
     {
       "name": "layout1",
       "type": "gridxy",
-      "groupby": "class",
+      "groupby": "Class",
       "aspect_raio":"fillX",
       "size": "uniform",
       "direction": "LRBT",
       "align": "LB",
       "margin": 5,
-      "padding": 5
+      "padding": 5,
+      "isScaleShared":true
     },
     {
       "name": "layout2",
@@ -24,7 +25,8 @@
       "direction": "LRBT",
       "align": "LB",
       "margin": 5,
-      "padding": 5
+      "padding": 5,
+      "isScaleShared": false
     }
   ],
   "mark": {

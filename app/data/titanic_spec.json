@@ -1,7 +1,7 @@
 {
   "title" : "Titanic",
   "data": "data/titanic.csv",
-  "width": 640,
+  "width": 10000,
   "height": 480,
   "layouts": [
     {

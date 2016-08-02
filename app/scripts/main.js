@@ -23,7 +23,9 @@ d3.json(spec_path, function(error, spec) {
       applyLayout(csv_data, myContainer,  layout);
     });
 
-    drawUnit(myContainer, spec.mark);
+    console.log(myContainer);
+
+    drawUnit(myContainer, spec, spec.mark);
 
 
   })
@@ -69,7 +71,6 @@ function makeContainersUsingSharedScale(data, container, layout) {
 function calcVisualSpace(parentContainer, childContainers, layout) {
   switch(layout.type) {
     case 'gridxy':
-      console.log('gridxy');
       calcGridxyVisualSpace(parentContainer, childContainers, layout);
       break;
     default:
@@ -139,13 +140,10 @@ function applyLayout(data,container, layout) {
 
   if (container.isContentsContainers) {
     container.contents.forEach(function(c) {
-
       applyLayout(data, c, layout);
     });
   } else {
-
     splitContainers(data, container, layout);
-
   }
 
 }
@@ -163,6 +161,38 @@ function splitContainers(data, container, layout) {
 
 }
 
-function drawUnit(leafContainers, mark) {
-  console.log ("TODO: Draw leafContainers using mark", leafContainers, mark);
+function drawUnit(container, spec, mark) {
+
+  var layouts = spec.layouts;
+
+  var svg = d3.select(".chart").append("svg")
+              .attr("width", spec.width )
+              .attr("height", spec.height);
+
+  var rootGroup = svg.selectAll(".root")
+      .data([container])
+    .enter().append("g")
+      .attr("class", "root")
+      .attr("transform", function(d) {
+        return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")"; })
+
+  var currentGroup = rootGroup;
+  layouts.forEach(function(layout) {
+
+    currentGroup = currentGroup.selectAll("." + layout.name)
+        .data(function(d) { return d.contents;})
+      .enter().append("g")
+        .attr("class", layout.name)
+        .attr("transform", function(d) {
+        return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")"; })
+
+  });
+
+  currentGroup.append("circle")
+          .attr("cx", function(d) {
+            return d.visualspace.width/2;
+          })
+          .attr("cy", function(d) { return d.visualspace.height/2; })
+          .attr("r", 1);
+
 }

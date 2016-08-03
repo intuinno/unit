@@ -4,7 +4,7 @@ d3.json(spec_path, function(error, spec) {
 
   d3.csv(spec.data, function(error, csv_data) {
 
-    csv_data.forEach(function(d,i) {
+    csv_data.forEach(function(d, i) {
       d.id = i;
     });
 
@@ -13,15 +13,14 @@ d3.json(spec_path, function(error, spec) {
     myContainer.isContentsContainers = false;
     myContainer.label = 'root';
     myContainer.visualspace = {
-                              'width': spec.width,
-                              'height': spec.height,
-                              'posX': 0,
-                              'posY': 0,
-                            };
+      'width': spec.width,
+      'height': spec.height,
+      'posX': 0,
+      'posY': 0,
+    };
 
-    spec.layouts.forEach(function(layout) {
-      applyLayout(csv_data, myContainer,  layout);
-    });
+    var layoutList = buildLayoutList(spec.layouts);
+    applyLayout(csv_data, myContainer, layoutList.head);
 
     console.log(myContainer);
 
@@ -31,10 +30,36 @@ d3.json(spec_path, function(error, spec) {
   })
 })
 
+function buildLayoutList(layouts) {
+
+  var layoutList = {};
+
+  layoutList.head = layouts[0];
+
+  layouts.forEach(function(layout, i, all) {
+
+    if (i > 0) {
+      layout.parent = all[i - 1];
+    } else {
+      layout.parent = "StartOfLayout";
+    }
+    if (i < all.length - 1) {
+      layout.child = all[i + 1];
+    } else {
+      layout.child = "EndOfLayout";
+    }
+  });
+
+  return layoutList;
+
+}
+
 function getKeys(data, groupby) {
   var myNest = d3.nest()
-                  .key(function(d) {return d[groupby]})
-                  .entries(data);
+    .key(function(d) {
+      return d[groupby]
+    })
+    .entries(data);
   return myNest.map(function(d) {
     return d.key;
   });
@@ -43,21 +68,21 @@ function getKeys(data, groupby) {
 function emptyContainersFromKeys(data, groupby) {
 
   return getKeys(data, groupby)
-              .map(function(key) {
-                return {
-                  'contents': [],
-                  'isContentsContainers': false,
-                  'label':key,
-                  'visualspace':{}
-                };
-              });
+    .map(function(key) {
+      return {
+        'contents': [],
+        'isContentsContainers': false,
+        'label': key,
+        'visualspace': {}
+      };
+    });
 }
 
 function makeContainersUsingSharedScale(data, container, layout) {
   var groupby = layout.groupby;
-  var newContainers= emptyContainersFromKeys(data, groupby);
+  var newContainers = emptyContainersFromKeys(data, groupby);
 
-  newContainers.forEach(function(c,i,all) {
+  newContainers.forEach(function(c, i, all) {
     c.contents = container.contents.filter(function(d) {
       return d[groupby] === c.label;
     });
@@ -69,7 +94,7 @@ function makeContainersUsingSharedScale(data, container, layout) {
 }
 
 function calcVisualSpace(parentContainer, childContainers, layout) {
-  switch(layout.type) {
+  switch (layout.type) {
     case 'gridxy':
       calcGridxyVisualSpace(parentContainer, childContainers, layout);
       break;
@@ -80,7 +105,7 @@ function calcVisualSpace(parentContainer, childContainers, layout) {
 }
 
 function calcGridxyVisualSpace(parentContainer, childContainers, layout) {
-  switch(layout.aspect_ratio) {
+  switch (layout.aspect_ratio) {
     case "fillX":
     case "fillY":
       calcFillGridxyVisualSpace(parentContainer, childContainers, layout);
@@ -88,24 +113,24 @@ function calcGridxyVisualSpace(parentContainer, childContainers, layout) {
     case "square":
     case "parent":
     case "custom":
-      calcPackGridxyVisualSpace(parentContainer, childContainers,layout)
+      calcPackGridxyVisualSpace(parentContainer, childContainers, layout)
   }
 }
 
-function calcFillGridxyVisualSpace(parentContainer, childContainers,layout) {
+function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
 
   var parentVisualSpace = parentContainer.visualspace;
 
   if (layout.aspect_ratio === 'fillX') {
-    childContainers.forEach(function(c,i,all) {
-      c.visualspace.width = (1.0*parentVisualSpace.width)/all.length;
+    childContainers.forEach(function(c, i, all) {
+      c.visualspace.width = (1.0 * parentVisualSpace.width) / all.length;
       c.visualspace.height = parentVisualSpace.height;
       c.visualspace.posX = i * c.visualspace.width;
       c.visualspace.posY = 0;
     });
   } else if (layout.aspect_ratio === 'fillY') {
-    childContainers.forEach(function(c,i,all) {
-      c.visualspace.height = (1.0*parentVisualSpace.height)/all.length;
+    childContainers.forEach(function(c, i, all) {
+      c.visualspace.height = (1.0 * parentVisualSpace.height) / all.length;
       c.visualspace.width = parentVisualSpace.width;
       c.visualspace.posY = i * c.visualspace.height;
       c.visualspace.posX = 0;
@@ -116,7 +141,7 @@ function calcFillGridxyVisualSpace(parentContainer, childContainers,layout) {
 
 }
 
-function calcPackGridxyVisualSpace(parentContainer, childContainers,layout) {
+function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
 
   console.log("TODO");
 
@@ -126,14 +151,16 @@ function makeContainersUsingIsolatedScale(data, container, layout) {
 
   var groupby = layout.groupby;
   var myNest = d3.nest()
-                  .key(function(d) {return d[groupby]})
-                  .entries(container.contents);
+    .key(function(d) {
+      return d[groupby]
+    })
+    .entries(container.contents);
 
-  var newContainers =  myNest.map(function(d) {
+  var newContainers = myNest.map(function(d) {
     return {
-      'contents':d.values,
-      'isContentsContainers':false,
-      'label':d.key,
+      'contents': d.values,
+      'isContentsContainers': false,
+      'label': d.key,
       'visualspace': {}
     };
   });
@@ -143,19 +170,7 @@ function makeContainersUsingIsolatedScale(data, container, layout) {
   return newContainers;
 }
 
-function applyLayout(data,container, layout) {
-
-  if (container.isContentsContainers) {
-    container.contents.forEach(function(c) {
-      applyLayout(data, c, layout);
-    });
-  } else {
-    splitContainers(data, container, layout);
-  }
-
-}
-
-function splitContainers(data, container, layout) {
+function applyLayout(data, container, layout) {
   var newContainers;
 
   if (layout.isScaleShared) {
@@ -163,9 +178,14 @@ function splitContainers(data, container, layout) {
   } else {
     newContainers = makeContainersUsingIsolatedScale(container.contents, container, layout);
   }
+
+  if (layout.child !== "EndOfLayout") {
+    newContainers.forEach(function (c) {
+      applyLayout(data, c, layout.child);
+    } );
+  }
   container.contents = newContainers;
   container.isContentsContainers = true;
-
 }
 
 function drawUnit(container, spec, mark) {
@@ -173,50 +193,58 @@ function drawUnit(container, spec, mark) {
   var layouts = spec.layouts;
 
   var svg = d3.select(".chart").append("svg")
-              .attr("width", spec.width )
-              .attr("height", spec.height);
+    .attr("width", spec.width)
+    .attr("height", spec.height);
 
   var rootGroup = svg.selectAll(".root")
-      .data([container])
+    .data([container])
     .enter().append("g")
-      .attr("class", "root")
-      .attr("transform", function(d) {
-        return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")"; })
+    .attr("class", "root")
+    .attr("transform", function(d) {
+      return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")";
+    })
 
   var currentGroup = rootGroup;
   layouts.forEach(function(layout) {
 
     var tempGroup = currentGroup.selectAll("." + layout.name)
-        .data(function(d) { return d.contents;})
+      .data(function(d) {
+        return d.contents;
+      })
       .enter().append("g")
-        .attr("class", layout.name)
-        .attr("transform", function(d) {
-        return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")"; });
+      .attr("class", layout.name)
+      .attr("transform", function(d) {
+        return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")";
+      });
 
     tempGroup.append("rect")
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("width",function(d) {
-            return d.visualspace.width;
-          })
-          .attr("height", function(d) {
-            return d.visualspace.height;
-          })
-          .style("opacity", 0.1)
-          .style("fill", "blue")
-          .style("stroke", "black")
-          .style("stroke-width", "1");
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", function(d) {
+        return d.visualspace.width;
+      })
+      .attr("height", function(d) {
+        return d.visualspace.height;
+      })
+      .style("opacity", 0.03)
+      .style("fill", "blue")
+      .style("stroke", "black")
+      .style("stroke-width", "1");
 
     currentGroup = tempGroup;
 
   });
 
   currentGroup.append("circle")
-          .attr("cx", function(d) {
-            return d.visualspace.width/2;
-          })
-          .attr("cy", function(d) { return d.visualspace.height/2; })
-          .attr("r", 1)
-          .style("fill", function(d) {return "purple"});
+    .attr("cx", function(d) {
+      return d.visualspace.width / 2;
+    })
+    .attr("cy", function(d) {
+      return d.visualspace.height / 2;
+    })
+    .attr("r", 1)
+    .style("fill", function(d) {
+      return "purple"
+    });
 
 }

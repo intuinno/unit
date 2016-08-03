@@ -242,9 +242,32 @@ function drawUnit(container, spec, mark) {
     .attr("cy", function(d) {
       return d.visualspace.height / 2;
     })
-    .attr("r", 1)
+    .attr("r", function(d) {
+      return calcRadius(d, container, mark);
+    })
     .style("fill", function(d) {
       return "purple"
     });
 
+}
+
+function calcRadius(leafContainer, rootContainer, markPolicy) {
+
+  var radius;
+  if (markPolicy.size.isShared) {
+    radius = calcRadiusShared(leafContainer, rootContainer, markPolicy);
+  } else {
+    radius = calcRadiusIsolated(leafContainer, markPolicy);
+  }
+  return radius;
+}
+
+function calcRadiusIsolated(leafContainer, markPolicy){
+
+  var width = leafContainer.visualspace.width;
+  var height = leafContainer.visualspace.height;
+
+  if (markPolicy.size.type === 'max') {
+    return width > height ? height/2.0 : width/2.0;
+  }
 }

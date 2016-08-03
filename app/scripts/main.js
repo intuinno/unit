@@ -58,7 +58,7 @@ function makeContainersUsingSharedScale(data, container, layout) {
   var newContainers= emptyContainersFromKeys(data, groupby);
 
   newContainers.forEach(function(c,i,all) {
-    c.contents = data.filter(function(d) {
+    c.contents = container.contents.filter(function(d) {
       return d[groupby] === c.label;
     });
   });
@@ -101,7 +101,14 @@ function calcFillGridxyVisualSpace(parentContainer, childContainers,layout) {
       c.visualspace.width = (1.0*parentVisualSpace.width)/all.length;
       c.visualspace.height = parentVisualSpace.height;
       c.visualspace.posX = i * c.visualspace.width;
-      c.visualspace.posY = parentVisualSpace.posY;
+      c.visualspace.posY = 0;
+    });
+  } else if (layout.aspect_ratio === 'fillY') {
+    childContainers.forEach(function(c,i,all) {
+      c.visualspace.height = (1.0*parentVisualSpace.height)/all.length;
+      c.visualspace.width = parentVisualSpace.width;
+      c.visualspace.posY = i * c.visualspace.height;
+      c.visualspace.posX = 0;
     });
   } else {
     console.log("TODO");
@@ -120,12 +127,12 @@ function makeContainersUsingIsolatedScale(data, container, layout) {
   var groupby = layout.groupby;
   var myNest = d3.nest()
                   .key(function(d) {return d[groupby]})
-                  .entries(data);
+                  .entries(container.contents);
 
   var newContainers =  myNest.map(function(d) {
     return {
       'contents':d.values,
-      'isContentsContainers':true,
+      'isContentsContainers':false,
       'label':d.key,
       'visualspace': {}
     };
@@ -179,12 +186,28 @@ function drawUnit(container, spec, mark) {
   var currentGroup = rootGroup;
   layouts.forEach(function(layout) {
 
-    currentGroup = currentGroup.selectAll("." + layout.name)
+    var tempGroup = currentGroup.selectAll("." + layout.name)
         .data(function(d) { return d.contents;})
       .enter().append("g")
         .attr("class", layout.name)
         .attr("transform", function(d) {
-        return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")"; })
+        return "translate(" + d.visualspace.posX + ", " + d.visualspace.posY + ")"; });
+
+    tempGroup.append("rect")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("width",function(d) {
+            return d.visualspace.width;
+          })
+          .attr("height", function(d) {
+            return d.visualspace.height;
+          })
+          .style("opacity", 0.1)
+          .style("fill", "blue")
+          .style("stroke", "black")
+          .style("stroke-width", "1");
+
+    currentGroup = tempGroup;
 
   });
 
@@ -193,6 +216,7 @@ function drawUnit(container, spec, mark) {
             return d.visualspace.width/2;
           })
           .attr("cy", function(d) { return d.visualspace.height/2; })
-          .attr("r", 1);
+          .attr("r", 1)
+          .style("fill", function(d) {return "purple"});
 
 }

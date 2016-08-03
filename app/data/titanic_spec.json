@@ -19,6 +19,18 @@
     {
       "name": "layout2",
       "type": "gridxy",
+      "groupby": "Sex",
+      "aspect_ratio":"fillY",
+      "size": "uniform",
+      "direction": "LRBT",
+      "align": "LB",
+      "margin": 5,
+      "padding": 5,
+      "isScaleShared": false
+    },
+    {
+      "name": "layout3",
+      "type": "gridxy",
       "groupby": "id",
       "aspect_ratio":"fillX",
       "size": "uniform",

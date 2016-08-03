@@ -46,7 +46,7 @@
     "color": "survival",
     "size": {
       "type": "max",
-      "isShared": false
+      "isShared": true
     },
     "isColorScaleShared": true
   }

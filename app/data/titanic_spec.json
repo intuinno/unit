@@ -14,7 +14,8 @@
       "align": "LB",
       "margin": 5,
       "padding": 5,
-      "isScaleShared":true
+      "isInputDomainShared":true,
+      "isOutputRangeShared":true
     },
     {
       "name": "layout2",
@@ -39,11 +40,14 @@
       "margin": 5,
       "padding": 5,
       "isScaleShared": false
-    }
-  ],
+    }],
   "mark": {
     "shape": "circle",
     "color": "survival",
-    "size": "max"
+    "size": {
+      "type": "max",
+      "isShared": false
+    },
+    "isColorScaleShared": true
   }
 }

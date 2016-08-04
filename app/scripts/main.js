@@ -10,7 +10,6 @@ d3.json(spec_path, function(error, spec) {
 
     var myContainer = {}
     myContainer.contents = csv_data;
-    myContainer.isContentsContainers = false;
     myContainer.label = 'root';
     myContainer.visualspace = {
       'width': spec.width,
@@ -24,7 +23,7 @@ d3.json(spec_path, function(error, spec) {
 
     console.log(myContainer);
 
-    drawUnit(myContainer, spec, spec.mark);
+    drawUnit(myContainer, spec, layoutList);
 
 
   })
@@ -71,7 +70,6 @@ function emptyContainersFromKeys(data, groupby) {
     .map(function(key) {
       return {
         'contents': [],
-        'isContentsContainers': false,
         'label': key,
         'visualspace': {}
       };
@@ -159,7 +157,6 @@ function makeContainersUsingIsolatedScale(data, container, layout) {
   var newContainers = myNest.map(function(d) {
     return {
       'contents': d.values,
-      'isContentsContainers': false,
       'label': d.key,
       'visualspace': {}
     };
@@ -184,13 +181,14 @@ function applyLayout(data, container, layout) {
       applyLayout(data, c, layout.child);
     } );
   }
+
   container.contents = newContainers;
-  container.isContentsContainers = true;
 }
 
-function drawUnit(container, spec, mark) {
+function drawUnit(container, spec, layoutList) {
 
   var layouts = spec.layouts;
+  var markPolicy = spec.mark;
 
   var svg = d3.select(".chart").append("svg")
     .attr("width", spec.width)
@@ -243,7 +241,7 @@ function drawUnit(container, spec, mark) {
       return d.visualspace.height / 2;
     })
     .attr("r", function(d) {
-      return calcRadius(d, container, mark);
+      return calcRadius(d, container, markPolicy, layoutList);
     })
     .style("fill", function(d) {
       return "purple"
@@ -251,11 +249,11 @@ function drawUnit(container, spec, mark) {
 
 }
 
-function calcRadius(leafContainer, rootContainer, markPolicy) {
+function calcRadius(leafContainer, rootContainer, markPolicy, layoutList) {
 
   var radius;
   if (markPolicy.size.isShared) {
-    radius = calcRadiusShared(leafContainer, rootContainer, markPolicy);
+    radius = calcRadiusShared(leafContainer, rootContainer, markPolicy, layoutList);
   } else {
     radius = calcRadiusIsolated(leafContainer, markPolicy);
   }
@@ -270,4 +268,34 @@ function calcRadiusIsolated(leafContainer, markPolicy){
   if (markPolicy.size.type === 'max') {
     return width > height ? height/2.0 : width/2.0;
   }
+}
+
+function calcRadiusShared(leafContainer, rootContainer, markPolicy, layoutList) {
+
+  var radius;
+  var leafContainersArr = buildLeafContainersArr(rootContainer, layoutList.head);
+
+  return d3.min(leafContainersArr, function(d) {
+    return calcRadiusIsolated(d, markPolicy);
+  });
+}
+
+function buildLeafContainersArr(container, layout) {
+
+  if (layout.child !== "EndOfLayout") {
+
+    var leafs = [];
+    container.contents.forEach(function(c) {
+      var newLeaves = buildLeafContainersArr(c, layout.child);
+
+      newLeaves.forEach(function(d) {
+        leafs.push(d);
+      });
+    });
+    return leafs;
+
+  } else {
+    return container.contents;
+  }
+
 }

@@ -45,7 +45,7 @@
         "key": "id",
         "isKeyShared": false
       },
-      "aspect_ratio":"fillX",
+      "aspect_ratio":"square",
       "size": {
         "type":"square",
         "isShare": false
@@ -60,7 +60,7 @@
     "color": "survival",
     "size": {
       "type": "max",
-      "isShared": true
+      "isShared": false
     },
     "isColorScaleShared": true
   }

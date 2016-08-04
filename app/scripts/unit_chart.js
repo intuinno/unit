@@ -66,7 +66,7 @@ export function UnitChart(divId, spec_path) {
 
   function emptyContainersFromKeys(data, groupby) {
 
-    return getKeys(data, groupby)
+    return getKeys(data, groupby.key)
       .map(function(key) {
         return {
           'contents': [],
@@ -76,13 +76,13 @@ export function UnitChart(divId, spec_path) {
       });
   }
 
-  function makeContainersUsingSharedScale(data, container, layout) {
+  function makeContainersUsingSharedKey(data, container, layout) {
     var groupby = layout.groupby;
     var newContainers = emptyContainersFromKeys(data, groupby);
 
     newContainers.forEach(function(c, i, all) {
       c.contents = container.contents.filter(function(d) {
-        return d[groupby] === c.label;
+        return d[groupby.key] === c.label;
       });
     });
 
@@ -142,12 +142,13 @@ export function UnitChart(divId, spec_path) {
   function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
 
     console.log('TODO');
+    
 
   }
 
-  function makeContainersUsingIsolatedScale(data, container, layout) {
+  function makeContainersUsingIsolatedKey(data, container, layout) {
 
-    var groupby = layout.groupby;
+    var groupby = layout.groupby.key;
     var myNest = d3.nest()
       .key(function(d) {
         return d[groupby]
@@ -170,10 +171,10 @@ export function UnitChart(divId, spec_path) {
   function applyLayout(data, container, layout) {
     var newContainers;
 
-    if (layout.isScaleShared) {
-      newContainers = makeContainersUsingSharedScale(data, container, layout);
+    if (layout.groupby.isKeyShared) {
+      newContainers = makeContainersUsingSharedKey(data, container, layout);
     } else {
-      newContainers = makeContainersUsingIsolatedScale(container.contents, container, layout);
+      newContainers = makeContainersUsingIsolatedKey(container.contents, container, layout);
     }
 
     if (layout.child !== 'EndOfLayout') {

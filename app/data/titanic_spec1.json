@@ -1,7 +1,7 @@
 {
   "title" : "Titanic",
   "data": "data/titanic.csv",
-  "width": 10000,
+  "width": 2000,
   "height": 480,
   "layouts": [
     {
@@ -46,7 +46,7 @@
     "color": "survival",
     "size": {
       "type": "max",
-      "isShared": true
+      "isShared": false
     },
     "isColorScaleShared": true
   }

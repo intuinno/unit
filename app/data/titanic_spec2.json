@@ -1,0 +1,53 @@
+{
+  "title" : "Titanic",
+  "data": "data/titanic.csv",
+  "width": 2000,
+  "height": 480,
+  "layouts": [
+    {
+      "name": "layout1",
+      "type": "gridxy",
+      "groupby": "Class",
+      "aspect_ratio":"fillX",
+      "size": "uniform",
+      "direction": "LRBT",
+      "align": "LB",
+      "margin": 5,
+      "padding": 5,
+      "isInputDomainShared":true,
+      "isOutputRangeShared":true
+    },
+    {
+      "name": "layout2",
+      "type": "gridxy",
+      "groupby": "Sex",
+      "aspect_ratio":"fillY",
+      "size": "uniform",
+      "direction": "LRBT",
+      "align": "LB",
+      "margin": 5,
+      "padding": 5,
+      "isScaleShared": false
+    },
+    {
+      "name": "layout3",
+      "type": "gridxy",
+      "groupby": "id",
+      "aspect_ratio":"fillX",
+      "size": "uniform",
+      "direction": "LRBT",
+      "align": "LB",
+      "margin": 5,
+      "padding": 5,
+      "isScaleShared": false
+    }],
+  "mark": {
+    "shape": "circle",
+    "color": "survival",
+    "size": {
+      "type": "max",
+      "isShared": true
+    },
+    "isColorScaleShared": true
+  }
+}

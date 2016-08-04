@@ -273,12 +273,11 @@ function calcRadiusIsolated(leafContainer, markPolicy){
 function calcRadiusShared(leafContainer, rootContainer, markPolicy, layoutList) {
 
   var radius;
-
   var leafContainersArr = buildLeafContainersArr(rootContainer, layoutList.head);
 
-  console.log(leafContainersArr);
-
-
+  return d3.min(leafContainersArr, function(d) {
+    return calcRadiusIsolated(d, markPolicy);
+  });
 }
 
 function buildLeafContainersArr(container, layout) {
@@ -289,14 +288,14 @@ function buildLeafContainersArr(container, layout) {
     container.contents.forEach(function(c) {
       var newLeaves = buildLeafContainersArr(c, layout.child);
 
-      newLeaves.forEach (fucntion(d) {
+      newLeaves.forEach(function(d) {
         leafs.push(d);
       });
     });
     return leafs;
 
   } else {
-    return container;
+    return container.contents;
   }
 
 }

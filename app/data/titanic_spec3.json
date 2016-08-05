@@ -33,7 +33,7 @@
         "type": "square",
         "isShared": false
       },
-      "direction": "LRBT",
+      "direction": "LRTB",
       "align": "LB",
       "margin": 5,
       "padding": 5
@@ -45,12 +45,12 @@
         "key": "id",
         "isKeyShared": false
       },
-      "aspect_ratio":"fillX",
+      "aspect_ratio":"square",
       "size": {
         "type":"square",
         "isShare": false
       },
-      "direction": "LRBT",
+      "direction": "LRTB",
       "align": "LB",
       "margin": 5,
       "padding": 5
@@ -60,7 +60,7 @@
     "color": "survival",
     "size": {
       "type": "max",
-      "isShared": true
+      "isShared": false
     },
     "isColorScaleShared": true
   }

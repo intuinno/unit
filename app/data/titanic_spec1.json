@@ -1,45 +1,59 @@
 {
   "title" : "Titanic",
   "data": "data/titanic.csv",
-  "width": 2000,
+  "width": 1000,
   "height": 480,
   "layouts": [
     {
       "name": "layout1",
       "type": "gridxy",
-      "groupby": "Class",
+      "groupby": {
+        "key": "Class",
+        "isKeyShared": true
+      },
       "aspect_ratio":"fillX",
-      "size": "uniform",
+      "size": {
+        "type":"square",
+        "isShared": false
+      },
       "direction": "LRBT",
       "align": "LB",
       "margin": 5,
-      "padding": 5,
-      "isInputDomainShared":true,
-      "isOutputRangeShared":true
+      "padding": 5
     },
     {
       "name": "layout2",
       "type": "gridxy",
-      "groupby": "Sex",
+      "groupby": {
+        "key": "Sex",
+        "isKeyShared": true
+      },
       "aspect_ratio":"fillY",
-      "size": "uniform",
+      "size": {
+        "type": "square",
+        "isShared": false
+      },
       "direction": "LRBT",
       "align": "LB",
       "margin": 5,
-      "padding": 5,
-      "isScaleShared": false
+      "padding": 5
     },
     {
       "name": "layout3",
       "type": "gridxy",
-      "groupby": "id",
+      "groupby": {
+        "key": "id",
+        "isKeyShared": false
+      },
       "aspect_ratio":"fillX",
-      "size": "uniform",
+      "size": {
+        "type":"square",
+        "isShare": false
+      },
       "direction": "LRBT",
       "align": "LB",
       "margin": 5,
-      "padding": 5,
-      "isScaleShared": false
+      "padding": 5
     }],
   "mark": {
     "shape": "circle",

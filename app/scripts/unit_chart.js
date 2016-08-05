@@ -141,9 +141,110 @@ export function UnitChart(divId, spec_path) {
 
   function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
 
-    console.log('TODO');
-    
+    if (layout.size.isShared) {
+      calcPackGridxyVisualSpaceShared(parentContainer, childContainers, layout);
+    } else {
+      calcPackGridxyVisualSpaceIsolated(parentContainer, childContainers, layout);
+    }
+  }
 
+  function calcPackGridxyVisualSpaceIsolated(parentContainer, childContainers, layout) {
+
+    if (isVerticalDirection(layout.direction)) {
+      calcWidthFillingPackVisualSpace(parentContainer, childContainers, layout);
+    } else {
+      calcHeightFillingPackVisualSpace(parentContainer, childContainers, layout);
+    }
+  }
+
+  function calcWidthFillingPackVisualSpace(parentContainer, childContainers, layout) {
+
+    var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.width, parentContainer.visualspace.height, childContainers.length, 1);
+    var xOrig, yOrig, xInc, yInc, numHoriElement, yOffset;
+
+    switch (layout.direction) {
+      case "LRTB":
+        xOrig = 0;
+        yOrig = 0;
+        xInc = edgeInfo.fillingEdgeSideUnitLength;
+        yInc = edgeInfo.remainingEdgeSideUnitLength;
+        numHoriElement = edgeInfo.fillingEdgeRepetitionCount;
+        break;
+      case "LRBT":
+        xOrig = 0;
+        yOrig = parentContainer.visualspace.height - edgeInfo.remainingEdgeSideUnitLength ;
+        xInc = edgeInfo.fillingEdgeSideUnitLength;
+        yInc = (-1.0) * edgeInfo.remainingEdgeSideUnitLength;
+        numHoriElement = edgeInfo.fillingEdgeRepetitionCount;
+        break;
+      case "RLBT":
+      case "RLTB":
+        console.log("TODO");
+        break;
+    }
+
+    childContainers.forEach(function(c, i, all) {
+      c.visualspace.width = edgeInfo.fillingEdgeSideUnitLength;
+      c.visualspace.height = edgeInfo.remainingEdgeSideUnitLength;
+      c.visualspace.posX = xOrig + xInc * (i % numHoriElement);
+      c.visualspace.posY = yOrig + yInc * (Math.floor(i / numHoriElement));
+    })
+  }
+
+
+  //Here ratio means the apect ratio of unit.
+  //ratio = Filling Edge side divided by RemainingEdge side
+
+  function getRepetitionCountForFillingEdge(fillingEdge, remainingEdge, numElement, ratio) {
+
+    var fillingEdgeRepetitionCount = 0;
+    var remainingEdgeSideUnitLength, remainingEdgeRepetitionCount, numPossibleContainers, fillingEdgeSideUnitLength;
+
+    do {
+
+      fillingEdgeRepetitionCount++;
+      fillingEdgeSideUnitLength = 1.0 * fillingEdge / fillingEdgeRepetitionCount;
+
+      remainingEdgeSideUnitLength = fillingEdgeSideUnitLength / ratio;
+
+      remainingEdgeRepetitionCount = Math.floor(1.0 * remainingEdge / remainingEdgeSideUnitLength);
+
+      numPossibleContainers = remainingEdgeRepetitionCount * fillingEdgeRepetitionCount;
+
+    }
+    while (numElement > numPossibleContainers);
+
+    return {
+      "fillingEdgeRepetitionCount": fillingEdgeRepetitionCount,
+      "remainingEdgeRepetitionCount": remainingEdgeRepetitionCount,
+      "fillingEdgeSideUnitLength": fillingEdgeSideUnitLength,
+      "remainingEdgeSideUnitLength": remainingEdgeSideUnitLength
+    };
+
+  }
+
+
+
+  function isVerticalDirection(direction) {
+
+    switch (direction) {
+      case "LRBT":
+      case "LRTB":
+      case "RLBT":
+      case "RLTB":
+        return true;
+        break;
+      case "BTLR":
+      case "BTRL":
+      case "TBLR":
+      case "TBLR":
+        return false;
+        break;
+    }
+  }
+
+  function calcPackGridxyVisualSpaceShared(parentContainer, childContainers, layout) {
+    console.log("TODO: calcPackGridxyVisualSpaceShared");
   }
 
   function makeContainersUsingIsolatedKey(data, container, layout) {

@@ -50,7 +50,7 @@
         "type":"square",
         "isShare": false
       },
-      "direction": "LRTB",
+      "direction": "LRBT",
       "align": "LB",
       "margin": 5,
       "padding": 5

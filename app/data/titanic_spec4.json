@@ -13,7 +13,7 @@
       },
       "aspect_ratio":"fillX",
       "size": {
-        "type":"square",
+        "type":"uniform",
         "isShared": false
       },
       "direction": "LRBT",
@@ -30,7 +30,7 @@
       },
       "aspect_ratio":"fillY",
       "size": {
-        "type": "square",
+        "type": "uniform",
         "isShared": true
       },
       "direction": "LRTB",
@@ -47,7 +47,7 @@
       },
       "aspect_ratio":"square",
       "size": {
-        "type":"square",
+        "type":"uniform",
         "isShare": false
       },
       "direction": "LRBT",

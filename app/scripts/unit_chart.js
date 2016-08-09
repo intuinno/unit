@@ -334,7 +334,7 @@ export function UnitChart(divId, spec_path) {
 
   function applySharedSize(layout) {
 
-    if(layout === "EndOfLayout"){
+    if(layout === "EndOfLayout" || layout.size.isShared !== true){
       return;
     }
 
@@ -345,6 +345,7 @@ export function UnitChart(divId, spec_path) {
     }
 
     makeSharedSize(layout);
+    layout.sizeSharingGroup = [];
   }
 
   function makeSharedSize(layout) {

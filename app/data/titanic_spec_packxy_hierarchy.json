@@ -1,4 +1,3 @@
-{
   "title" : "Titanic",
   "data": "data/titanic.csv",
   "width": 1000,
@@ -31,7 +30,7 @@
       "aspect_ratio":"fillY",
       "size": {
         "type": "uniform",
-        "isShared": true
+        "isShared": false
       },
       "direction": "LRTB",
       "align": "LB",

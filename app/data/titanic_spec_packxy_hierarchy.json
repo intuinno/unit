@@ -1,3 +1,4 @@
+{
   "title" : "Titanic",
   "data": "data/titanic.csv",
   "width": 1000,

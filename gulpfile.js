@@ -86,6 +86,11 @@ gulp.task('images', () => {
     .pipe(gulp.dest('dist/images'));
 });
 
+gulp.task('data', () => {
+  return gulp.src('app/data/**/*')
+    .pipe(gulp.dest('dist/data'));
+});
+
 gulp.task('fonts', () => {
   return gulp.src(require('main-bower-files')('**/*.{eot,svg,ttf,woff,woff2}', function (err) {})
     .concat('app/fonts/**/*'))
@@ -100,6 +105,14 @@ gulp.task('extras', () => {
   ], {
     dot: true
   }).pipe(gulp.dest('dist'));
+});
+
+gulp.task('jsoneditor', () => {
+  return gulp.src([
+    'app/styles/img/*.*'
+  ], {
+    dot: true
+  }).pipe(gulp.dest('dist/styles/img'));
 });
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
@@ -166,10 +179,16 @@ gulp.task('wiredep', () => {
     .pipe(gulp.dest('app'));
 });
 
-gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
+gulp.task('build', ['lint', 'html', 'images','data','fonts', 'extras','jsoneditor'], () => {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 
 gulp.task('default', ['clean'], () => {
   gulp.start('build');
+});
+
+gulp.task('deploy', ['build'], () => {
+  return gulp.src('dist')
+    .pipe($.subtree())
+    .pipe($.clean());
 });

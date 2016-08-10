@@ -18,13 +18,37 @@
 </head>
 
 <body>
-  <div id="editorchart"></div>
-<div id="update">
-  <input  id="updatebutton" name="updateButton" type="button" value="Update" />
-</div>
 
+  <h1>
+    Edit json and press update button
+  </h1>
+  <div id="editorchart"></div>
+  <div id="update">
+    <input id="updatebutton" name="updateButton" type="button" value="Update" />
+  </div>
   <div id="jsoneditor" style="width: 400px; height: 400px;"></div>
 
+
+  <h1>
+  Examples. Please refer the json file
+  </h1>
+
+
+
+  <h3>Unit Column Chart </h3>
+  Layout1 class, fillX, Layout2 id, packXY
+
+  By setting the size.isShared for second pack layout, we can create absolute version and relative percentage version.
+  <a href="data/unit_column_chart_shared.json">JSON for Left </a>
+  <a href="data/unit_column_chart.json">JSON for Right</a>
+  <div class="container">
+    <div id="unit_column_chart_shared" class="fixed">
+    </div>
+    <div id="unit_column_chart" class="fixed">
+    </div>
+    <div id="unit_column_chart_shared_mark" class="flex-item">
+    </div>
+  </div>
 
   <div id="packxy_hierarchy"></div>
   Layout1 class, fillX, size:isShared=true, Layout2 gender, fillY, size:isShared=false, Layout3 id, packXY, size: isShared=true

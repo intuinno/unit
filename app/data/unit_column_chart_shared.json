@@ -1,14 +1,14 @@
 {
   "title" : "Titanic",
-  "data": "data/titanic.csv",
-  "width": 1000,
-  "height": 480,
+  "data": "data/titanic3.csv",
+  "width": 320,
+  "height": 240,
   "layouts": [
     {
       "name": "layout1",
       "type": "gridxy",
       "groupby": {
-        "key": "Class",
+        "key": "pclass",
         "isShared": false
       },
       "aspect_ratio":"fillX",
@@ -23,23 +23,6 @@
     },
     {
       "name": "layout2",
-      "type": "gridxy",
-      "groupby": {
-        "key": "Sex",
-        "isShared": true
-      },
-      "aspect_ratio":"fillY",
-      "size": {
-        "type": "uniform",
-        "isShared": true
-      },
-      "direction": "LRTB",
-      "align": "LB",
-      "margin": 5,
-      "padding": 5
-    },
-    {
-      "name": "layout3",
       "type": "gridxy",
       "groupby": {
         "key": "id",

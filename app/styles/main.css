@@ -7,3 +7,13 @@
   font: 10px sans-serif;
   text-anchor: end;
 }
+
+.container{
+    display: flex;
+}
+.fixed{
+    width: 400px;
+}
+.flex-item{
+    flex-grow: 1;
+}

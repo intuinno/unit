@@ -4,6 +4,20 @@ d3.json('./data/editor.json', function(error,data){
   UnitChart('editorchart', data);
 });
 
+d3.json('./data/unit_column_chart_shared.json', function(error,data){
+  UnitChart('unit_column_chart_shared', data);
+});
+
+d3.json('./data/unit_column_chart.json', function(error,data){
+  UnitChart('unit_column_chart', data);
+});
+
+d3.json('./data/unit_column_chart_shared_mark.json', function(error,data){
+  UnitChart('unit_column_chart_shared_mark', data);
+});
+
+
+
 d3.json('./data/titanic_spec_packxy_hierarchy.json', function(error,data){
   UnitChart('packxy_hierarchy', data);
 });
@@ -28,11 +42,11 @@ d3.json('./data/titanic_spec1.json', function(error,data){
   UnitChart('titanic1', data);
 });
 
-var container = document.getElementById('jsoneditor');
+var container = document.getElementById("jsoneditor");
 var options = {};
 var editor = new JSONEditor(container, options);
 
-d3.json('./data/titanic_spec_packxy_hierarchy.json', function(error, json) {
+d3.json("./data/titanic_spec_packxy_hierarchy.json", function(error, json) {
   editor.set(json);
 });
 

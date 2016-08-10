@@ -9,7 +9,7 @@
       "type": "gridxy",
       "groupby": {
         "key": "Class",
-        "isKeyShared": false
+        "isShared": false
       },
       "aspect_ratio":"fillX",
       "size": {
@@ -26,7 +26,7 @@
       "type": "gridxy",
       "groupby": {
         "key": "Sex",
-        "isKeyShared": true
+        "isShared": true
       },
       "aspect_ratio":"fillY",
       "size": {
@@ -43,12 +43,12 @@
       "type": "gridxy",
       "groupby": {
         "key": "id",
-        "isKeyShared": false
+        "isShared": false
       },
       "aspect_ratio":"square",
       "size": {
         "type":"uniform",
-        "isShare": false
+        "isShared": true
       },
       "direction": "LRBT",
       "align": "LB",

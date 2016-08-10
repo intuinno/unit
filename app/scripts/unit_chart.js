@@ -1,4 +1,4 @@
-export function UnitChart(divId, spec) {
+exports.UnitChart = function (divId, spec) {
 
   d3.csv(spec.data, function(error, csv_data) {
 

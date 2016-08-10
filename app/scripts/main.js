@@ -1,6 +1,4 @@
-import {
-  UnitChart
-} from "./unit_chart";
+var UnitChart = require('./unit_chart').UnitChart;
 
 d3.json('/data/editor.json', function(error,data){
   UnitChart('editorchart', data);

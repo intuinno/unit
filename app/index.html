@@ -1,54 +1,63 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>unit</title>
 
-    <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <!-- endbower -->
-    <!-- endbuild -->
+<head>
+  <meta charset="utf-8">
+  <title>unit</title>
 
-    <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
-    <!-- endbuild -->
+  <!-- build:css styles/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="/bower_components/jsoneditor/dist/jsoneditor.min.css" />
+  <!-- endbower -->
+  <!-- endbuild -->
 
-  </head>
-  <body>
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
 
-    <div id="packxy_hierarchy"></div>
-    Layout1 class, fillX, size:isShared=true,
-    Layout2 gender, fillY, size:isShared=false,
-    Layout3 id, packXY, size: isShared=true
-    <a href="data/titanic_spec_packxy_hierarchy.json">JSON </a>
+</head>
 
-    <div id="packxy_isolated"></div>
-    PackXY shared size
-    <a href="data/titanic_spec_packxy_isolated.json">JSON </a>
+<body>
+  <div id="editorchart"></div>
+<div id="update">
+  <input  id="updatebutton" name="updateButton" type="button" value="Update" />
+</div>
 
-    <div id="packxy2"></div>
-    PackXY LRBT
-    <a href="data/titanic_spec4.json"> JSON </a>
+  <div id="jsoneditor" style="width: 400px; height: 400px;"></div>
 
-    <div id="packxy"></div>
-    PackXY LRTB
-    <a href="data/titanic_spec3.json"> JSON </a>
 
-    <div id="titanic2"></div>
-    titanic
-    unit size max with shared. <a href="data/titanic_spec2.json"> JSON </a>
-    <div id="titanic1"></div>
-    titanic
-    unit size max with isolated. <a href="data/titanic_spec1.json"> JSON </a>
-    <!-- build:js scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="/bower_components/jquery/dist/jquery.js"></script>
-    <script src="/bower_components/d3/d3.js"></script>
-    <!-- endbower -->
-    <!-- endbuild -->
+  <div id="packxy_hierarchy"></div>
+  Layout1 class, fillX, size:isShared=true, Layout2 gender, fillY, size:isShared=false, Layout3 id, packXY, size: isShared=true
+  <a href="data/titanic_spec_packxy_hierarchy.json">JSON </a>
 
-    <!-- build:js scripts/main.js -->
-    <script src="scripts/bundle.js"></script>
-    <!-- endbuild -->
-  </body>
+  <div id="packxy_isolated"></div>
+  PackXY shared size
+  <a href="data/titanic_spec_packxy_isolated.json">JSON </a>
+
+  <div id="packxy2"></div>
+  PackXY LRBT
+  <a href="data/titanic_spec4.json"> JSON </a>
+
+  <div id="packxy"></div>
+  PackXY LRTB
+  <a href="data/titanic_spec3.json"> JSON </a>
+
+  <div id="titanic2"></div>
+  titanic unit size max with shared. <a href="data/titanic_spec2.json"> JSON </a>
+  <div id="titanic1"></div>
+  titanic unit size max with isolated. <a href="data/titanic_spec1.json"> JSON </a>
+
+
+  <!-- build:js scripts/vendor.js -->
+  <!-- bower:js -->
+  <script src="/bower_components/d3/d3.js"></script>
+  <script src="/bower_components/jsoneditor/dist/jsoneditor.min.js"></script>
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js scripts/main.js -->
+  <script src="scripts/bundle.js"></script>
+  <!-- endbuild -->
+</body>
+
 </html>

@@ -18,10 +18,10 @@ exports.UnitChart = function(divId, spec) {
 var defaultSetting = {
   layout: {
     box: {
-      "fill":'blue',
-      "stroke":'black',
-      "stroke-width": 1,
-      "opacity":0.03
+      'fill':'blue',
+      'stroke':'black',
+      'stroke-width': 1,
+      'opacity':0.03
     }
   }
 }

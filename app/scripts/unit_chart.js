@@ -22,7 +22,7 @@ function buildRootContainer(csv_data, spec) {
   myContainer.label = 'root';
   if (!spec.hasOwnProperty('padding')) {
     spec.padding =
-    {"top": 10, "left": 30, "bottom": 30, "right": 10};
+    {'top': 10, 'left': 30, 'bottom': 30, 'right': 10};
   }
 
   myContainer.visualspace = {
@@ -32,7 +32,7 @@ function buildRootContainer(csv_data, spec) {
     'posY': 0,
     'padding':spec.padding
   };
-  myContainer.layout = "StartOfLayout";
+  myContainer.layout = 'StartOfLayout';
   myContainer.parent = 'RootContainer';
 
   return myContainer;
@@ -49,7 +49,7 @@ function buildLayoutList(layouts, rootLayout) {
     if (i > 0) {
       layout.parent = all[i - 1];
     } else {
-      layout.parent = "StartOfLayout";
+      layout.parent = 'StartOfLayout';
     }
     if (i < all.length - 1) {
       layout.child = all[i + 1];
@@ -85,7 +85,7 @@ function emptyContainersFromKeys(data, groupby) {
 
 function calcVisualSpace(parentContainer, childContainers, layout) {
 
-  console.log("calcVisualSpace", layout.name);
+  console.log('calcVisualSpace', layout.name);
 
 
   layout.containers = childContainers;
@@ -174,23 +174,23 @@ function applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo) {
   var xOrig, yOrig, xInc, yInc, numHoriElement, yOffset;
 
   switch (layout.direction) {
-    case "LRTB":
+    case 'LRTB':
       xOrig = 0;
       yOrig = 0;
       xInc = edgeInfo.fillingEdgeSideUnitLength;
       yInc = edgeInfo.remainingEdgeSideUnitLength;
       numHoriElement = edgeInfo.fillingEdgeRepetitionCount;
       break;
-    case "LRBT":
+    case 'LRBT':
       xOrig = 0;
       yOrig = parentContainer.visualspace.height - edgeInfo.remainingEdgeSideUnitLength;
       xInc = edgeInfo.fillingEdgeSideUnitLength;
       yInc = (-1.0) * edgeInfo.remainingEdgeSideUnitLength;
       numHoriElement = edgeInfo.fillingEdgeRepetitionCount;
       break;
-    case "RLBT":
-    case "RLTB":
-      console.log("TODO");
+    case 'RLBT':
+    case 'RLTB':
+      console.log('TODO');
       break;
   }
 
@@ -225,10 +225,10 @@ function getRepetitionCountForFillingEdge(fillingEdge, remainingEdge, numElement
   while (numElement > numPossibleContainers);
 
   return {
-    "fillingEdgeRepetitionCount": fillingEdgeRepetitionCount,
-    "remainingEdgeRepetitionCount": remainingEdgeRepetitionCount,
-    "fillingEdgeSideUnitLength": fillingEdgeSideUnitLength,
-    "remainingEdgeSideUnitLength": remainingEdgeSideUnitLength
+    'fillingEdgeRepetitionCount': fillingEdgeRepetitionCount,
+    'remainingEdgeRepetitionCount': remainingEdgeRepetitionCount,
+    'fillingEdgeSideUnitLength': fillingEdgeSideUnitLength,
+    'remainingEdgeSideUnitLength': remainingEdgeSideUnitLength
   };
 
 }
@@ -236,16 +236,16 @@ function getRepetitionCountForFillingEdge(fillingEdge, remainingEdge, numElement
 function isVerticalDirection(direction) {
 
   switch (direction) {
-    case "LRBT":
-    case "LRTB":
-    case "RLBT":
-    case "RLTB":
+    case 'LRBT':
+    case 'LRTB':
+    case 'RLBT':
+    case 'RLTB':
       return true;
       break;
-    case "BTLR":
-    case "BTRL":
-    case "TBLR":
-    case "TBLR":
+    case 'BTLR':
+    case 'BTRL':
+    case 'TBLR':
+    case 'TBLR':
       return false;
       break;
   }
@@ -255,12 +255,12 @@ function calcPackGridxyVisualSpaceShared(parentContainer, childContainers, layou
 
   if (isVerticalDirection(layout.direction)) {
     calcWidthFillingPackVisualSpace(parentContainer, childContainers, layout);
-    var minSharedWidth = getMinAmongContainers(parentContainer, layout, "width");
+    var minSharedWidth = getMinAmongContainers(parentContainer, layout, 'width');
     applySharedWidthOnContainers(minSharedWidth, parentContainer, childContainers, layout);
 
   } else {
     calcHeightFillingPackVisualSpace(parentContainer, childContainers, layout);
-    var minSharedHeight = getMinAmongContainers(childContainers, "height");
+    var minSharedHeight = getMinAmongContainers(childContainers, 'height');
   }
 }
 
@@ -304,14 +304,14 @@ function buildEdgeInfoFromMinWidth(parentContainer, minWidth, layout) {
   if (layout.aspect_ratio === 'square') {
     height = minWidth;
   } else {
-    console.log("TODO");
+    console.log('TODO');
   }
 
   return {
-    "fillingEdgeRepetitionCount": horizontalRepetitionCount,
-    "remainingEdgeRepetitionCount": verticalRepetitionCount,
-    "fillingEdgeSideUnitLength": minWidth,
-    "remainingEdgeSideUnitLength": height
+    'fillingEdgeRepetitionCount': horizontalRepetitionCount,
+    'remainingEdgeRepetitionCount': verticalRepetitionCount,
+    'fillingEdgeSideUnitLength': minWidth,
+    'remainingEdgeSideUnitLength': height
   }
 }
 
@@ -330,7 +330,7 @@ function applyLayout(container, layout) {
 
 
 
-  console.log("Fininshing", layout.name);
+  console.log('Fininshing', layout.name);
 }
 
 function handleSharedSize(container, layout) {
@@ -348,11 +348,11 @@ function handleSharedSize(container, layout) {
 
 function applySharedSize(layout) {
 
-  if (layout === "EndOfLayout" || layout.size.isShared !== true) {
+  if (layout === 'EndOfLayout' || layout.size.isShared !== true) {
     return;
   }
 
-  if (layout.child != "EndOfLayout") {
+  if (layout.child != 'EndOfLayout') {
     if (layout.child.size.isShared) {
       applySharedSize(layout.child);
     }
@@ -376,7 +376,7 @@ function makeSharedSize(layout) {
 }
 
 function makeSharedSizeFill(layout) {
-  console.log("TODO: makeSharedSizeFill");
+  console.log('TODO: makeSharedSizeFill');
 }
 
 function makeSharedSizePack(layout) {
@@ -385,12 +385,12 @@ function makeSharedSizePack(layout) {
 
   if (isVerticalDirection(layout.direction)) {
 
-    var minSharedWidth = getMinAmongContainers(layout, "width");
+    var minSharedWidth = getMinAmongContainers(layout, 'width');
     applySharedWidthOnContainers(minSharedWidth, layout);
 
   } else {
     calcHeightFillingPackVisualSpace(parentContainer, childContainers, layout);
-    var minSharedHeight = getMinAmongContainers(childContainers, "height");
+    var minSharedHeight = getMinAmongContainers(childContainers, 'height');
   }
 
 }

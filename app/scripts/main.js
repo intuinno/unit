@@ -46,11 +46,11 @@ d3.json('./data/titanic_spec_packxy_mixed.json', function(error,data){
 //   UnitChart('titanic1', data);
 // });
 
-var container = document.getElementById("jsoneditor");
+var container = document.getElementById('jsoneditor');
 var options = {};
 var editor = new JSONEditor(container, options);
 
-d3.json("./data/titanic_spec_packxy_hierarchy.json", function(error, json) {
+d3.json('./data/titanic_spec_packxy_hierarchy.json', function(error, json) {
   editor.set(json);
 });
 

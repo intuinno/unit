@@ -1,8 +1,9 @@
 {
   "title" : "Titanic",
   "data": "data/titanic.csv",
-  "width": 1000,
-  "height": 480,
+  "width": 320,
+  "height": 240,
+  "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
   "layouts": [
     {
       "name": "layout1",
@@ -18,8 +19,8 @@
       },
       "direction": "LRBT",
       "align": "LB",
-      "margin": 5,
-      "padding": 5
+      "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
+      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
     },
     {
       "name": "layout2",
@@ -35,8 +36,8 @@
       },
       "direction": "LRTB",
       "align": "LB",
-      "margin": 5,
-      "padding": 5
+      "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
+      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
     },
     {
       "name": "layout3",
@@ -48,12 +49,12 @@
       "aspect_ratio":"square",
       "size": {
         "type":"uniform",
-        "isShare": false
+        "isShare": true
       },
       "direction": "LRBT",
       "align": "LB",
-      "margin": 5,
-      "padding": 5
+      "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
+      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
     }],
   "mark": {
     "shape": "circle",

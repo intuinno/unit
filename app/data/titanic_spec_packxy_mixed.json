@@ -1,8 +1,8 @@
 {
   "title" : "Titanic",
   "data": "data/titanic.csv",
-  "width": 1000,
-  "height": 480,
+  "width": 320  ,
+  "height": 240,
   "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
   "layouts": [
     {
@@ -49,7 +49,7 @@
       "aspect_ratio":"square",
       "size": {
         "type":"uniform",
-        "isShared": true
+        "isShared": false
       },
       "direction": "LRBT",
       "align": "LB",

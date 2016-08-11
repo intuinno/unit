@@ -36,11 +36,14 @@
 
 
   <h3>Unit Column Chart </h3>
-  Layout1 class, fillX, Layout2 id, packXY
+  Layout1 class fillX</p>
+  Layout2 id packXY </p>
 
   By setting the size.isShared for second pack layout, we can create absolute version and relative percentage version.
   <a href="data/unit_column_chart_shared.json">JSON for Left </a>
-  <a href="data/unit_column_chart.json">JSON for Right</a>
+  <a href="data/unit_column_chart.json">JSON for Middle</a>
+  <a href="data/unit_column_chart_shared_mark.json">JSON for Right</a>
+
   <div class="container">
     <div id="unit_column_chart_shared" class="fixed">
     </div>
@@ -50,17 +53,32 @@
     </div>
   </div>
 
-  <div id="packxy_hierarchy"></div>
-  Layout1 class, fillX, size:isShared=true, Layout2 gender, fillY, size:isShared=false, Layout3 id, packXY, size: isShared=true
-  <a href="data/titanic_spec_packxy_hierarchy.json">JSON </a>
+  <h3>Hierarchical Sharing </h3>
+  Layout1 class fillX</p>
+  Layout2 gender fillY</p>
+  Layout3 id packXY </p>
+  These sharing settings are hierarchical meaning that each level can have its own sharing configuration on/off and these affect to what extent the domain is shared. <p>
+  <a href="data/titanic_spec_packxy_isolated.json">JSON for Top Left (Layout2: True, Layout3: True )</a> <p>
+  <a href="data/titanic_spec4.json">JSON for Top Right (Layout2: True, Layout3: False )</a> <p>
+  <a href="data/titanic_spec_packxy_hierarchy.json">JSON for Bottom Left (Layout2: False, Layout3: True)</a> <p>
+  <a href="data/titanic_spec_packxy_mixed.json">JSON for Bottom Right (Layout2: False, Layout3: False)</a> <p>
 
-  <div id="packxy_isolated"></div>
-  PackXY shared size
-  <a href="data/titanic_spec_packxy_isolated.json">JSON </a>
 
-  <div id="packxy2"></div>
-  PackXY LRBT
-  <a href="data/titanic_spec4.json"> JSON </a>
+  <div class="container">
+    <div id="packxy_isolated" class="fixed">
+    </div>
+    <div id="packxy2" class="flex-item">
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="packxy_hierarchy" class="fixed">
+    </div>
+    <div id="packxy_mixed" class="flex-item">
+    </div>
+  </div>
+
+
 
   <div id="packxy"></div>
   PackXY LRTB

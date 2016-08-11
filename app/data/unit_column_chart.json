@@ -3,6 +3,7 @@
   "data": "data/titanic3.csv",
   "width": 320,
   "height": 240,
+  "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10},
   "layouts": [
     {
       "name": "layout1",
@@ -18,8 +19,8 @@
       },
       "direction": "LRBT",
       "align": "LB",
-      "margin": 5,
-      "padding": 5
+      "margin": {"top": 10, "left": 5, "bottom": 5, "right": 10},
+      "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10}
     },
     {
       "name": "layout2",
@@ -35,8 +36,8 @@
       },
       "direction": "LRBT",
       "align": "LB",
-      "margin": 5,
-      "padding": 5
+      "margin": {"top": 10, "left": 30, "bottom": 30, "right": 10},
+      "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10}
     }],
   "mark": {
     "shape": "circle",

@@ -1,4 +1,4 @@
-export function UnitChart(divId, spec) {
+exports.UnitChart = function (divId, spec) {
 
   d3.csv(spec.data, function(error, csv_data) {
 
@@ -20,11 +20,17 @@ function buildRootContainer(csv_data, spec) {
   var myContainer = {};
   myContainer.contents = csv_data;
   myContainer.label = 'root';
+  if (!spec.hasOwnProperty('padding')) {
+    spec.padding =
+    {'top': 10, 'left': 30, 'bottom': 30, 'right': 10};
+  }
+
   myContainer.visualspace = {
     'width': spec.width,
     'height': spec.height,
     'posX': 0,
     'posY': 0,
+    'padding':spec.padding
   };
   myContainer.layout = 'StartOfLayout';
   myContainer.parent = 'RootContainer';
@@ -113,17 +119,26 @@ function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
 
   if (layout.aspect_ratio === 'fillX') {
     childContainers.forEach(function(c, i, all) {
-      c.visualspace.width = (1.0 * parentVisualSpace.width) / all.length;
-      c.visualspace.height = parentVisualSpace.height;
-      c.visualspace.posX = i * c.visualspace.width;
-      c.visualspace.posY = 0;
+      c.visualspace.width = (1.0 * (parentVisualSpace.width - parentVisualSpace.padding.left - parentVisualSpace.padding.right)) / all.length - layout.margin.left - layout.margin.right;
+
+      c.visualspace.height = parentVisualSpace.height-parentVisualSpace.padding.top-parentVisualSpace.padding.bottom-layout.margin.top-layout.margin.bottom;
+
+      c.visualspace.posX = parentVisualSpace.padding.left+ i * (c.visualspace.width+layout.margin.right+layout.margin.left)+ layout.margin.left;
+
+      c.visualspace.posY = parentVisualSpace.padding.top + layout.margin.top;
+
+      c.visualspace.padding = layout.padding;
     });
   } else if (layout.aspect_ratio === 'fillY') {
     childContainers.forEach(function(c, i, all) {
-      c.visualspace.height = (1.0 * parentVisualSpace.height) / all.length;
-      c.visualspace.width = parentVisualSpace.width;
-      c.visualspace.posY = i * c.visualspace.height;
-      c.visualspace.posX = 0;
+      c.visualspace.height = (1.0 * (parentVisualSpace.height - parentVisualSpace.padding.top-parentVisualSpace.padding.bottom)) / all.length - layout.margin.top-layout.margin.bottom;
+
+      c.visualspace.width = parentVisualSpace.width-parentVisualSpace.padding.left-parentVisualSpace.padding.right-layout.margin.left-layout.margin.right;
+
+      c.visualspace.posY = parentVisualSpace.padding.top + i *( c.visualspace.height+layout.margin.top+layout.margin.bottom) + layout.margin.top;
+      c.visualspace.posX = parentVisualSpace.padding.left + layout.margin.left ;
+
+      c.visualspace.padding = layout.padding;
     });
   } else {
     console.log('TODO');

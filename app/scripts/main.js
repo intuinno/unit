@@ -30,23 +30,27 @@ d3.json('./data/titanic_spec4.json', function(error,data){
   UnitChart('packxy2', data);
 });
 
-d3.json('./data/titanic_spec3.json', function(error,data){
-  UnitChart('packxy', data);
+d3.json('./data/titanic_spec_packxy_mixed.json', function(error,data){
+  UnitChart('packxy_mixed', data);
 });
 
-d3.json('./data/titanic_spec2.json', function(error,data){
-  UnitChart('titanic2', data);
-});
+// d3.json('./data/titanic_spec3.json', function(error,data){
+//   UnitChart('packxy', data);
+// });
+//
+// d3.json('./data/titanic_spec2.json', function(error,data){
+//   UnitChart('titanic2', data);
+// });
+//
+// d3.json('./data/titanic_spec1.json', function(error,data){
+//   UnitChart('titanic1', data);
+// });
 
-d3.json('./data/titanic_spec1.json', function(error,data){
-  UnitChart('titanic1', data);
-});
-
-var container = document.getElementById("jsoneditor");
+var container = document.getElementById('jsoneditor');
 var options = {};
 var editor = new JSONEditor(container, options);
 
-d3.json("./data/titanic_spec_packxy_hierarchy.json", function(error, json) {
+d3.json('./data/titanic_spec_packxy_hierarchy.json', function(error, json) {
   editor.set(json);
 });
 

@@ -1,6 +1,6 @@
 {
   "title" : "Titanic",
-  "data": "data/titanic.csv",
+  "data": "data/titanic3.csv",
   "width": 1000,
   "height": 480,
   "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
@@ -9,10 +9,12 @@
       "name": "layout1",
       "type": "gridxy",
       "groupby": {
-        "key": "Class",
+        "key": "age",
+        "type": "numerical",
+        "numBin": 8,
         "isShared": false
       },
-      "aspect_ratio":"fillX",
+      "aspect_ratio":"parent",
       "size": {
         "type":"uniform",
         "isShared": false
@@ -20,16 +22,22 @@
       "direction": "LRBT",
       "align": "LB",
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
-      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
+      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
+      "box": {
+        "fill": 'blue',
+        "stroke": 'black',
+        'stroke-width': 1,
+        "opacity":0.03
+      }
     },
     {
       "name": "layout2",
       "type": "gridxy",
       "groupby": {
-        "key": "Sex",
+        "key": "pclass",
         "isShared": true
       },
-      "aspect_ratio":"fillY",
+      "aspect_ratio":"fillX",
       "size": {
         "type": "uniform",
         "isShared": false
@@ -37,7 +45,13 @@
       "direction": "LRTB",
       "align": "LB",
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
-      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
+      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
+      "box": {
+        "fill": 'green',
+        "stroke": 'red',
+        'stroke-width': 2,
+        "opacity":0.05
+      }
     },
     {
       "name": "layout3",
@@ -54,7 +68,13 @@
       "direction": "LRBT",
       "align": "LB",
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
-      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
+      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
+      "box": {
+        "fill": 'blue',
+        "stroke": 'black',
+        'stroke-width': 1,
+        "opacity":0.03
+      }
     }],
   "mark": {
     "shape": "circle",

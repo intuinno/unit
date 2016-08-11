@@ -1,4 +1,4 @@
-exports.UnitChart = function (divId, spec) {
+exports.UnitChart = function(divId, spec) {
 
   d3.csv(spec.data, function(error, csv_data) {
 
@@ -15,14 +15,29 @@ exports.UnitChart = function (divId, spec) {
 
 };
 
+var defaultSetting = {
+  layout: {
+    box: {
+      "fill":'blue',
+      "stroke":'black',
+      "stroke-width": 1,
+      "opacity":0.03
+    }
+  }
+}
+
 
 function buildRootContainer(csv_data, spec) {
   var myContainer = {};
   myContainer.contents = csv_data;
   myContainer.label = 'root';
   if (!spec.hasOwnProperty('padding')) {
-    spec.padding =
-    {'top': 10, 'left': 30, 'bottom': 30, 'right': 10};
+    spec.padding = {
+      'top': 10,
+      'left': 30,
+      'bottom': 30,
+      'right': 10
+    };
   }
 
   myContainer.visualspace = {
@@ -30,7 +45,7 @@ function buildRootContainer(csv_data, spec) {
     'height': spec.height,
     'posX': 0,
     'posY': 0,
-    'padding':spec.padding
+    'padding': spec.padding
   };
   myContainer.layout = 'StartOfLayout';
   myContainer.parent = 'RootContainer';
@@ -121,9 +136,9 @@ function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
     childContainers.forEach(function(c, i, all) {
       c.visualspace.width = (1.0 * (parentVisualSpace.width - parentVisualSpace.padding.left - parentVisualSpace.padding.right)) / all.length - layout.margin.left - layout.margin.right;
 
-      c.visualspace.height = parentVisualSpace.height-parentVisualSpace.padding.top-parentVisualSpace.padding.bottom-layout.margin.top-layout.margin.bottom;
+      c.visualspace.height = parentVisualSpace.height - parentVisualSpace.padding.top - parentVisualSpace.padding.bottom - layout.margin.top - layout.margin.bottom;
 
-      c.visualspace.posX = parentVisualSpace.padding.left+ i * (c.visualspace.width+layout.margin.right+layout.margin.left)+ layout.margin.left;
+      c.visualspace.posX = parentVisualSpace.padding.left + i * (c.visualspace.width + layout.margin.right + layout.margin.left) + layout.margin.left;
 
       c.visualspace.posY = parentVisualSpace.padding.top + layout.margin.top;
 
@@ -131,12 +146,12 @@ function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
     });
   } else if (layout.aspect_ratio === 'fillY') {
     childContainers.forEach(function(c, i, all) {
-      c.visualspace.height = (1.0 * (parentVisualSpace.height - parentVisualSpace.padding.top-parentVisualSpace.padding.bottom)) / all.length - layout.margin.top-layout.margin.bottom;
+      c.visualspace.height = (1.0 * (parentVisualSpace.height - parentVisualSpace.padding.top - parentVisualSpace.padding.bottom)) / all.length - layout.margin.top - layout.margin.bottom;
 
-      c.visualspace.width = parentVisualSpace.width-parentVisualSpace.padding.left-parentVisualSpace.padding.right-layout.margin.left-layout.margin.right;
+      c.visualspace.width = parentVisualSpace.width - parentVisualSpace.padding.left - parentVisualSpace.padding.right - layout.margin.left - layout.margin.right;
 
-      c.visualspace.posY = parentVisualSpace.padding.top + i *( c.visualspace.height+layout.margin.top+layout.margin.bottom) + layout.margin.top;
-      c.visualspace.posX = parentVisualSpace.padding.left + layout.margin.left ;
+      c.visualspace.posY = parentVisualSpace.padding.top + i * (c.visualspace.height + layout.margin.top + layout.margin.bottom) + layout.margin.top;
+      c.visualspace.posX = parentVisualSpace.padding.left + layout.margin.left;
 
       c.visualspace.padding = layout.padding;
     });
@@ -163,7 +178,18 @@ function calcPackGridxyVisualSpaceIsolated(parentContainer, childContainers, lay
 
 function calcWidthFillingPackVisualSpace(parentContainer, childContainers, layout) {
 
-  var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.width, parentContainer.visualspace.height, childContainers.length, 1);
+  var aspect_ratio;
+
+  switch(layout.aspect_ratio) {
+    case 'square':
+      aspect_ratio = 1;
+      break;
+    case 'parent':
+      aspect_ratio = 1.0* parentContainer.visualspace.width / parentContainer.visualspace.height;
+      break;
+  }
+
+  var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.width, parentContainer.visualspace.height, childContainers.length, aspect_ratio);
 
   applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo);
 
@@ -199,6 +225,7 @@ function applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo) {
     c.visualspace.height = edgeInfo.remainingEdgeSideUnitLength;
     c.visualspace.posX = xOrig + xInc * (i % numHoriElement);
     c.visualspace.posY = yOrig + yInc * (Math.floor(i / numHoriElement));
+    c.visualspace.padding = layout.padding;
   })
 }
 
@@ -401,6 +428,16 @@ function makeContainers(container, layout) {
 
   var sharingDomain = getSharingDomain(sharingAncestorContainer);
 
+  if (layout.groupby.hasOwnProperty('type') && layout.groupby.type === 'numerical') {
+    return makeContainersForNumericalVar(sharingDomain, container, layout);
+  } else {
+    return makeContainersForCategoricalVar(sharingDomain, container, layout);
+  }
+
+}
+
+function makeContainersForCategoricalVar(sharingDomain, container, layout) {
+
   var newContainers = emptyContainersFromKeys(sharingDomain, layout.groupby.key);
 
   newContainers.forEach(function(c, i, all) {
@@ -409,9 +446,54 @@ function makeContainers(container, layout) {
     });
     c.parent = container;
   });
-
-
   return newContainers;
+}
+
+function makeContainersForNumericalVar(sharingDomain, container, layout) {
+
+  var groupby = layout.groupby;
+
+  var extent = d3.extent(sharingDomain, function(d) {
+    return +d[groupby.key];
+  });
+
+  var tempScale = d3.scaleLinear().domain([0, groupby.numBin]).range(extent);
+  var tickArray = d3.range(groupby.numBin + 1).map(tempScale);
+
+  var nullGroup = sharingDomain.filter(function(d) {
+    return d[groupby.key] == '';
+
+  });
+
+  var valueGroup = sharingDomain.filter(function(d) {
+    return d[groupby.key] != '';
+  });
+
+  var bins = d3.histogram()
+    .domain(extent)
+    .thresholds(tickArray)
+    .value(function(d) {
+      return +d[groupby.key];
+    })(valueGroup);
+
+  console.log(bins);
+
+  nullGroup = [nullGroup];
+  nullGroup.x0 = '';
+  nullGroup.x1 = '';
+
+  var containers = nullGroup.concat(bins);
+
+  containers = containers.map(function(d) {
+    return {
+      'contents': d,
+      'label': d.x0 + '-' + d.x1,
+      'visualspace': {},
+      'parent': container
+    }
+  });
+
+  return containers;
 
 }
 
@@ -493,10 +575,34 @@ function drawUnit(container, spec, layoutList, divId) {
       .attr('height', function(d) {
         return d.visualspace.height;
       })
-      .style('opacity', 0.03)
-      .style('fill', 'blue')
-      .style('stroke', 'black')
-      .style('stroke-width', '1');
+      .style('opacity', function(d) {
+        if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('opacity')) {
+          return layout.box.opacity;
+        } else {
+          return defaultSetting.layout.box.opacity;
+        }
+      })
+      .style('fill', function(d) {
+        if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('fill')) {
+          return layout.box.fill;
+        } else {
+          return defaultSetting.layout.box.fill;
+        }
+      })
+      .style('stroke', function(d) {
+        if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('stroke')) {
+          return layout.box.stroke;
+        } else {
+          return defaultSetting.layout.box.stroke;
+        }
+      })
+      .style('stroke-width', function(d) {
+        if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('stroke-width')) {
+          return layout.box['stroke-width'];
+        } else {
+          return defaultSetting.layout.box['stroke-width'];
+        }
+      });
 
     currentGroup = tempGroup;
 

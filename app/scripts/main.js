@@ -50,7 +50,7 @@ var container = document.getElementById('jsoneditor');
 var options = {};
 var editor = new JSONEditor(container, options);
 
-d3.json('./data/titanic_spec_packxy_hierarchy.json', function(error, json) {
+d3.json('./data/editor.json', function(error, json) {
   editor.set(json);
 });
 

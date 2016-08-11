@@ -24,9 +24,9 @@
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "box": {
-        "fill": 'blue',
-        "stroke": 'black',
-        'stroke-width': 1,
+        "fill": "blue",
+        "stroke": "black",
+        "stroke-width": 1,
         "opacity":0.03
       }
     },
@@ -47,9 +47,9 @@
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "box": {
-        "fill": 'green',
-        "stroke": 'red',
-        'stroke-width': 2,
+        "fill": "green",
+        "stroke": "red",
+        "stroke-width": 2,
         "opacity":0.05
       }
     },
@@ -70,9 +70,9 @@
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "box": {
-        "fill": 'blue',
-        "stroke": 'black',
-        'stroke-width': 1,
+        "fill": "blue",
+        "stroke": "black",
+        "stroke-width": 1,
         "opacity":0.03
       }
     }],

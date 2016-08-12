@@ -18,10 +18,10 @@ exports.UnitChart = function(divId, spec) {
 var defaultSetting = {
   layout: {
     box: {
-      'fill':'blue',
-      'stroke':'black',
+      'fill': 'blue',
+      'stroke': 'black',
       'stroke-width': 1,
-      'opacity':0.03
+      'opacity': 0.03
     }
   }
 }
@@ -124,9 +124,66 @@ function calcGridxyVisualSpace(parentContainer, childContainers, layout) {
     case 'square':
     case 'parent':
     case 'custom':
-      calcPackGridxyVisualSpace(parentContainer, childContainers, layout)
+      calcPackGridxyVisualSpace(parentContainer, childContainers, layout);
+      break;
+    case "maxfill":
+      calcPackGridxyMaxFillVisualSpace(parentContainer, childContainers, layout);
   }
 }
+
+function calcPackGridxyMaxFillVisualSpace(parentContainer, childContainers, layout) {
+
+  var edgeInfo = buildEdgeInfoForMaxFill(parentContainer, childContainers, layout);
+
+  applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo);
+
+}
+
+function buildEdgeInfoForMaxFill(parentContainer, childContainers, layout) {
+
+  var combinations = getCombination(childContainers.length);
+
+  var combinationForWidthAndHeight = combinations.map(function(d) {
+    return {
+      'width': parentContainer.visualspace.width / d.a,
+      'height': parentContainer.visualspace.height / d.b,
+      'horizontalRepetitionCount': d.a,
+      'verticalRepetitionCount': d.b
+    };
+  });
+
+  combinationForWidthAndHeight.forEach(function(d) {
+    d.minEdge = (d.width > d.height) ? d.height : d.width;
+  })
+
+  var minCombi = d3.scan(combinationForWidthAndHeight, function(a, b) {
+    return b.minEdge - a.minEdge;
+  });
+
+  var edgeInfo = combinationForWidthAndHeight[minCombi];
+
+  return {
+    'fillingEdgeRepetitionCount': edgeInfo.horizontalRepetitionCount,
+    'remainingEdgeRepetitionCount': edgeInfo.verticalRepetitionCount,
+    'fillingEdgeSideUnitLength': edgeInfo.width,
+    'remainingEdgeSideUnitLength': edgeInfo.height
+  };
+
+}
+
+function getCombination(n) {
+  var combi = _.range(1, n + 1);
+
+  combi = combi.map(function(d) {
+    return {
+      'a': d,
+      'b': Math.ceil(n / d)
+    };
+  });
+
+  return combi;
+}
+
 
 function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
 
@@ -180,12 +237,12 @@ function calcWidthFillingPackVisualSpace(parentContainer, childContainers, layou
 
   var aspect_ratio;
 
-  switch(layout.aspect_ratio) {
+  switch (layout.aspect_ratio) {
     case 'square':
       aspect_ratio = 1;
       break;
     case 'parent':
-      aspect_ratio = 1.0* parentContainer.visualspace.width / parentContainer.visualspace.height;
+      aspect_ratio = 1.0 * parentContainer.visualspace.width / parentContainer.visualspace.height;
       break;
   }
 
@@ -278,35 +335,77 @@ function isVerticalDirection(direction) {
   }
 }
 
-function calcPackGridxyVisualSpaceShared(parentContainer, childContainers, layout) {
-
-  if (isVerticalDirection(layout.direction)) {
-    calcWidthFillingPackVisualSpace(parentContainer, childContainers, layout);
-    var minSharedWidth = getMinAmongContainers(parentContainer, layout, 'width');
-    applySharedWidthOnContainers(minSharedWidth, parentContainer, childContainers, layout);
-
-  } else {
-    calcHeightFillingPackVisualSpace(parentContainer, childContainers, layout);
-    var minSharedHeight = getMinAmongContainers(childContainers, 'height');
-  }
-}
-
-function getMinAmongContainers(layout, prop) {
+function getMinAmongContainers(layout) {
 
   var shared_containers = layout.sizeSharingGroup;
 
-  return d3.min(shared_containers, function(d) {
-    return d.visualspace[prop];
-  });
+  var minSizeItemIndex;
+
+  switch (layout.aspect_ratio) {
+    case "square":
+    case "parent":
+    case "custom":
+      minSizeItemIndex = d3.scan(shared_containers, function(a, b) {
+        return a.visualspace.width - b.visualspace.width;
+      });
+      return {
+  'width': shared_containers[minSizeItemIndex].visualspace.width,
+  'height': shared_containers[minSizeItemIndex].visualspace.height
+};
+      break;
+    case "maxfill":
+      var tempMinorSide = shared_containers.map(function(d) {
+        return (d.visualspace.width > d.visualspace.height) ? d.visualspace.height : d.visualspace.width;
+      });
+      minSizeItemIndex = d3.scan(tempMinorSide, function(a, b) {
+        return a - b;
+      });
+
+      var minContainer = shared_containers.reduce(function(pre, cur) {
+
+        var minPre, maxPre, minCur, maxCur;
+
+        if (pre.visualspace.height > pre.visualspace.width) {
+          minPre = pre.visualspace.width;
+          maxPre = pre.visualspace.height;
+        } else {
+          minPre = pre.visualspace.height;
+          maxPre = pre.visualspace.width;
+        }
+
+        if (cur.visualspace.height > cur.visualspace.width) {
+          minCur = cur.visualspace.width;
+          maxCur = cur.visualspace.height;
+        } else {
+          minCur = cur.visualspace.height;
+          maxCur = cur.visualspace.width;
+        }
+
+        if (minCur < minPre) {
+          return cur;
+        } else if (minCur == minPre) {
+          if (maxCur < maxPre) {
+            return cur;
+          }
+        }
+        return pre;
+      });
+
+      return {
+        'width': minContainer.visualspace.width,
+        'height': minContainer.visualspace.height
+      };
+  }
+
 }
 
-function applySharedWidthOnContainers(minWidth, layout) {
+function applySharedSizeOnContainers(minSize, layout) {
 
   var parentContainers = getParents(layout.sizeSharingGroup);
 
   parentContainers.forEach(function(c) {
 
-    var edgeInfo = buildEdgeInfoFromMinWidth(c, minWidth, layout);
+    var edgeInfo = buildEdgeInfoFromMinSize(c, minSize, layout);
 
     applyEdgeInfo(c, c.contents, layout, edgeInfo);
   });
@@ -322,24 +421,18 @@ function getParents(containers) {
   return [...mySet];
 }
 
-function buildEdgeInfoFromMinWidth(parentContainer, minWidth, layout) {
+function buildEdgeInfoFromMinSize(parentContainer, minSize, layout) {
 
   var height;
-
-  var horizontalRepetitionCount = Math.round(parentContainer.visualspace.width / minWidth);
-  var verticalRepetitionCount = 0;
-  if (layout.aspect_ratio === 'square') {
-    height = minWidth;
-  } else {
-    console.log('TODO');
-  }
+  var horizontalRepetitionCount = Math.floor(parentContainer.visualspace.width / minSize.width);
+  var verticalRepetitionCount = Math.floor(parentContainer.visualspace.height / minSize.height);;
 
   return {
     'fillingEdgeRepetitionCount': horizontalRepetitionCount,
     'remainingEdgeRepetitionCount': verticalRepetitionCount,
-    'fillingEdgeSideUnitLength': minWidth,
-    'remainingEdgeSideUnitLength': height
-  }
+    'fillingEdgeSideUnitLength': minSize.width,
+    'remainingEdgeSideUnitLength': minSize.height
+  };
 }
 
 function applyLayout(container, layout) {
@@ -398,7 +491,9 @@ function makeSharedSize(layout) {
     case 'square':
     case 'parent':
     case 'custom':
-      makeSharedSizePack(layout)
+    case 'maxfill':
+      makeSharedSizePack(layout);
+      break;
   }
 }
 
@@ -409,17 +504,9 @@ function makeSharedSizeFill(layout) {
 function makeSharedSizePack(layout) {
   console.log(layout);
 
+  var minSize = getMinAmongContainers(layout);
 
-  if (isVerticalDirection(layout.direction)) {
-
-    var minSharedWidth = getMinAmongContainers(layout, 'width');
-    applySharedWidthOnContainers(minSharedWidth, layout);
-
-  } else {
-    calcHeightFillingPackVisualSpace(parentContainer, childContainers, layout);
-    var minSharedHeight = getMinAmongContainers(childContainers, 'height');
-  }
-
+  applySharedSizeOnContainers(minSize, layout);
 }
 
 function makeContainers(container, layout) {

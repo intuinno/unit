@@ -78,22 +78,29 @@
     </div>
   </div>
 
+  <h3>Maxfill aspect_ratio </h3>
+  Layout1 age PackXY</p>
+  Layout2 class fillX</p>
+  Layout3  packXY </p>
 
+  The square aspect_ratio can lead to the empty space.  To resolve this, 'maxfill' aspect ratio try to find the an optimal aspect ratio that is close to square while removing empty space.  <p>
+  <a href="data/square_aspect.json">JSON for Top (Layout3: aspect_ratio:square)</a> <p>
+  <a href="data/maxfill_aspect.json">JSON for Bottom (Layout3: aspect_ratio:maxfill )</a> <p>
 
-  <div id="packxy"></div>
-  PackXY LRTB
-  <a href="data/titanic_spec3.json"> JSON </a>
+  <div>
+    <div id="square_aspect">
+    </div>
+    <div id="maxfill_aspect">
+    </div>
+  </div>
 
-  <div id="titanic2"></div>
-  titanic unit size max with shared. <a href="data/titanic_spec2.json"> JSON </a>
-  <div id="titanic1"></div>
-  titanic unit size max with isolated. <a href="data/titanic_spec1.json"> JSON </a>
 
 
   <!-- build:js scripts/vendor.js -->
   <!-- bower:js -->
   <script src="/bower_components/d3/d3.js"></script>
   <script src="/bower_components/jsoneditor/dist/jsoneditor.min.js"></script>
+  <script src="/bower_components/underscore/underscore.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
 

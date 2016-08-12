@@ -126,7 +126,7 @@ function calcGridxyVisualSpace(parentContainer, childContainers, layout) {
     case 'custom':
       calcPackGridxyVisualSpace(parentContainer, childContainers, layout);
       break;
-    case "maxfill":
+    case 'maxfill':
       calcPackGridxyMaxFillVisualSpace(parentContainer, childContainers, layout);
   }
 }
@@ -172,7 +172,7 @@ function buildEdgeInfoForMaxFill(parentContainer, childContainers, layout) {
 }
 
 function getCombination(n) {
-  var combi = _.range(1, n + 1);
+  var combi = d3.range(1, n + 1);
 
   combi = combi.map(function(d) {
     return {
@@ -342,9 +342,9 @@ function getMinAmongContainers(layout) {
   var minSizeItemIndex;
 
   switch (layout.aspect_ratio) {
-    case "square":
-    case "parent":
-    case "custom":
+    case 'square':
+    case 'parent':
+    case 'custom':
       minSizeItemIndex = d3.scan(shared_containers, function(a, b) {
         return a.visualspace.width - b.visualspace.width;
       });
@@ -353,7 +353,7 @@ function getMinAmongContainers(layout) {
   'height': shared_containers[minSizeItemIndex].visualspace.height
 };
       break;
-    case "maxfill":
+    case 'maxfill':
       var tempMinorSide = shared_containers.map(function(d) {
         return (d.visualspace.width > d.visualspace.height) ? d.visualspace.height : d.visualspace.width;
       });

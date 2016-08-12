@@ -301,7 +301,7 @@ function getRepetitionCountForFillingEdge(fillingEdge, remainingEdge, numElement
 
     remainingEdgeSideUnitLength = fillingEdgeSideUnitLength / ratio;
 
-    remainingEdgeRepetitionCount = Math.floor(1.0 * remainingEdge / remainingEdgeSideUnitLength);
+    remainingEdgeRepetitionCount = Math.floor( remainingEdge * fillingEdgeRepetitionCount * ratio /fillingEdge );
 
     numPossibleContainers = remainingEdgeRepetitionCount * fillingEdgeRepetitionCount;
 

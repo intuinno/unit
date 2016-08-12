@@ -39,6 +39,9 @@ d3.json('./data/square_aspect.json', function(error,data){
 d3.json('./data/maxfill_aspect.json', function(error,data){
   UnitChart('maxfill_aspect', data);
 });
+d3.json('./data/unit_small_multiple.json', function(error,data){
+  UnitChart('unit_small_multiple', data);
+});
 
 
 var container = document.getElementById('jsoneditor');

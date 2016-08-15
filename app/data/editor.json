@@ -47,17 +47,16 @@
     "groupby": {
       "key": "age",
       "type": "numerical",
-      "numBin": 19,
-      "isShared": false,
-
+      "numBin": 3,
+      "isShared": true
     },
     "aspect_ratio": "fillY",
     "size": {
-      "type": "count",
+      "type": "uniform",
       "isShared": true
     },
     "direction": "BT",
-    "align": "center",
+    "align": "bottom",
     "margin": {
       "top": 0,
       "left": 0,
@@ -80,17 +79,50 @@
     "name": "layout3",
     "type": "gridxy",
     "groupby": {
+      "key": "age",
+      "type": "numerical",
+      "numBin": 3,
+      "isShared": true
+    },
+    "aspect_ratio": "fillX",
+    "size": {
+      "type": "count",
+      "isShared": true
+    },
+    "direction": "LR",
+    "align": "center",
+    "margin": {
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0
+    },
+    "padding": {
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0
+    },
+    "box": {
+      "fill": "green",
+      "stroke": "red",
+      "stroke-width": 2,
+      "opacity": 0.5
+    }
+  }, {
+    "name": "layout4",
+    "type": "gridxy",
+    "groupby": {
       "key": "id",
-      "isShared": false,
-
+      "isShared": false
     },
     "aspect_ratio": "square",
     "size": {
       "type": "uniform",
-      "isShared": false
+      "isShared": true
     },
     "direction": "LRBT",
-    "align": "center",
+    "align": "LB",
     "margin": {
       "top": 0,
       "left": 0,

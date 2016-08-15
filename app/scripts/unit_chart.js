@@ -187,35 +187,142 @@ function getCombination(n) {
 
 function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
 
+  var availableSpace = getAvailableSpace(parentContainer,layout);
+
+  var unitLength = getUnit(availableSpace, childContainers, layout);
+
+  calcFillGridxyVisualSpaceWithUnitLength(parentContainer, childContainers, layout, unitLength);
+
+}
+
+function calcFillGridxyVisualSpaceWithUnitLength(parentContainer, childContainers, layout, unitLength) {
   var parentVisualSpace = parentContainer.visualspace;
 
   if (layout.aspect_ratio === 'fillX') {
+
+    var unitWidth = unitLength;
+
     childContainers.forEach(function(c, i, all) {
-      c.visualspace.width = (1.0 * (parentVisualSpace.width - parentVisualSpace.padding.left - parentVisualSpace.padding.right)) / all.length - layout.margin.left - layout.margin.right;
+      c.visualspace.width = unitWidth * getValue(c, layout) - layout.margin.left - layout.margin.right;
 
       c.visualspace.height = parentVisualSpace.height - parentVisualSpace.padding.top - parentVisualSpace.padding.bottom - layout.margin.top - layout.margin.bottom;
 
-      c.visualspace.posX = parentVisualSpace.padding.left + i * (c.visualspace.width + layout.margin.right + layout.margin.left) + layout.margin.left;
+      if (i === 0) {
+        c.visualspace.posX = parentVisualSpace.padding.left + layout.margin.right;
+      } else {
+        c.visualspace.posX = all[i - 1].visualspace.posX + all[i - 1].visualspace.width + layout.margin.left + layout.margin.right;
+      }
 
       c.visualspace.posY = parentVisualSpace.padding.top + layout.margin.top;
 
       c.visualspace.padding = layout.padding;
     });
   } else if (layout.aspect_ratio === 'fillY') {
+
+    var unitHeight = unitLength;
+
     childContainers.forEach(function(c, i, all) {
-      c.visualspace.height = (1.0 * (parentVisualSpace.height - parentVisualSpace.padding.top - parentVisualSpace.padding.bottom)) / all.length - layout.margin.top - layout.margin.bottom;
+      c.visualspace.height = unitHeight * getValue(c, layout) - layout.margin.top - layout.margin.bottom;
 
       c.visualspace.width = parentVisualSpace.width - parentVisualSpace.padding.left - parentVisualSpace.padding.right - layout.margin.left - layout.margin.right;
 
-      c.visualspace.posY = parentVisualSpace.padding.top + i * (c.visualspace.height + layout.margin.top + layout.margin.bottom) + layout.margin.top;
       c.visualspace.posX = parentVisualSpace.padding.left + layout.margin.left;
 
       c.visualspace.padding = layout.padding;
     });
+
+    getPosYforFillY(parentVisualSpace, layout, childContainers);
+
   } else {
     console.log('TODO');
   }
 
+}
+
+function getPosYforFillY(parentVisualspace, layout, childContainers) {
+
+  var start, direction, offset;
+
+  switch (layout.direction) {
+    case "LRTB":
+    case "RLTB":
+    case "TBLR":
+    case "TBRL":
+    case "TB":
+      start = 0;
+      direction = 1;
+      break;
+    case "LRBT":
+    case "RLBT":
+    case "BTLR":
+    case "BTRL":
+    case "BT":
+      start = childContainers.length;
+      direction = -1;
+      break;
+    default:
+      console.log("Unsupported Layout Direction", layout);
+  }
+
+  var totalheight = d3.sum(childContainers, function(c) {
+    return c.visualspace.height + layout.margin.top + layout.margin.bottom;
+  });
+
+  switch(layout.align) {
+    case "top":
+    case "RT":
+    case "CT":
+    case "LT":
+      offset = parentVisualspace.padding.top;
+      break;
+    case "middle":
+    case "LM":
+    case "RM":
+    case "CM":
+      offset = parentVisualspace.padding.top + (parentVisualspace.height - parentVisualspace.padding.top - parentVisualspace.padding.bottom)/2 - totalheight/2;
+      break;
+    case "bottom":
+    case "LB":
+    case "CB":
+    case "RB":
+      offset = parentVisualspace.height - parentVisualspace.padding.bottom - totalheight;
+      break;
+  }
+
+  childContainers.forEach(function(c,i, all) {
+    var index = start + direction * i;
+    if (index === 0) {
+      c.visualspace.posY = offset + layout.margin.top;
+    } else {
+      c.visualspace.posY = all[index - 1].visualspace.posY + all[index - 1].visualspace.height + layout.margin.bottom + layout.margin.top;
+    }
+  });
+
+}
+
+
+function getUnit(availableSpace, childContainers, layout) {
+
+  var sum = d3.sum(childContainers, function(d) {
+    return getValue(d, layout);
+  });
+  return availableSpace/sum;
+}
+
+function getValue(container, layout) {
+  switch (layout.size.type) {
+    case "uniform":
+      return 1;
+      break;
+    case "sum":
+      return d3.sum(container.contents, function(d) {
+        return d[layout.size.key];
+      });
+      break;
+    case "count":
+      return container.contents.length;
+      break;
+  }
 }
 
 function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
@@ -301,7 +408,7 @@ function getRepetitionCountForFillingEdge(fillingEdge, remainingEdge, numElement
 
     remainingEdgeSideUnitLength = fillingEdgeSideUnitLength / ratio;
 
-    remainingEdgeRepetitionCount = Math.floor( remainingEdge * fillingEdgeRepetitionCount * ratio /fillingEdge );
+    remainingEdgeRepetitionCount = Math.floor(remainingEdge * fillingEdgeRepetitionCount * ratio / fillingEdge);
 
     numPossibleContainers = remainingEdgeRepetitionCount * fillingEdgeRepetitionCount;
 
@@ -349,9 +456,9 @@ function getMinAmongContainers(layout) {
         return a.visualspace.width - b.visualspace.width;
       });
       return {
-  'width': shared_containers[minSizeItemIndex].visualspace.width,
-  'height': shared_containers[minSizeItemIndex].visualspace.height
-};
+        'width': shared_containers[minSizeItemIndex].visualspace.width,
+        'height': shared_containers[minSizeItemIndex].visualspace.height
+      };
       break;
     case 'maxfill':
       var tempMinorSide = shared_containers.map(function(d) {
@@ -498,7 +605,44 @@ function makeSharedSize(layout) {
 }
 
 function makeSharedSizeFill(layout) {
-  console.log('TODO: makeSharedSizeFill');
+
+  var minUnit = getMinUnitAmongContainers(layout);
+
+  applySharedUnitOnContainers(minUnit, layout);
+
+}
+
+function applySharedUnitOnContainers(minUnit, layout) {
+
+  var parentContainers = getParents(layout.sizeSharingGroup);
+
+  parentContainers.forEach(function(d) {
+      calcFillGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
+  });
+}
+
+function getMinUnitAmongContainers(layout) {
+  var parentContainers = getParents(layout.sizeSharingGroup);
+
+  var minUnit = d3.min(parentContainers, function(d) {
+    var availableSpace = getAvailableSpace(d, layout);
+    var descendantContainers = buildLeafContainersArr(d, layout);
+    var unit = getUnit(availableSpace, d.contents, layout);
+
+    return unit;
+  });
+
+  return minUnit;
+}
+
+
+
+function getAvailableSpace(container, layout) {
+  if (layout.aspect_ratio === 'fillX') {
+    return container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
+  } else if (layout.aspect_ratio === 'fillY') {
+    return container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
+  }
 }
 
 function makeSharedSizePack(layout) {

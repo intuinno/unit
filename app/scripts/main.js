@@ -66,6 +66,12 @@ d3.json('./data/violin.json', function(error,data){
 });
 
 
+//Mosaic
+d3.json('./data/mosaic.json', function(error,data){
+  UnitChart('mosaic', data);
+});
+
+
 var container = document.getElementById('jsoneditor');
 var options = {};
 var editor = new JSONEditor(container, options);

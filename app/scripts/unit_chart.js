@@ -432,7 +432,7 @@ function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
       aspect_ratio = 1;
       break;
     case 'parent':
-      aspect_ratio = parentContainer.visualspace.width / parentContainer.visualspace.height;
+      aspect_ratio = (parentContainer.visualspace.width / parentContainer.visualspace.height);
       break;
   }
 

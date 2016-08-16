@@ -206,12 +206,7 @@ function buildEdgeInfoForMaxFill(parentContainer, childContainers, layout) {
 
   var edgeInfo = combinationForWidthAndHeight[minCombi];
 
-  return {
-    'fillingEdgeRepetitionCount': edgeInfo.horizontalRepetitionCount,
-    'remainingEdgeRepetitionCount': edgeInfo.verticalRepetitionCount,
-    'fillingEdgeSideUnitLength': edgeInfo.width,
-    'remainingEdgeSideUnitLength': edgeInfo.height
-  };
+  return buildEdgeInfoByDirection(edgeInfo.horizontalRepetitionCount, edgeInfo.verticalRepetitionCount, edgeInfo.width, edgeInfo.height, layout);
 
 }
 
@@ -430,21 +425,6 @@ function getValue(container, layout) {
 
 function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
 
-  calcPackGridxyVisualSpaceIsolated(parentContainer, childContainers, layout);
-
-}
-
-function calcPackGridxyVisualSpaceIsolated(parentContainer, childContainers, layout) {
-
-  if (isVerticalDirection(layout.direction)) {
-    calcWidthFillingPackVisualSpace(parentContainer, childContainers, layout);
-  } else {
-    calcHeightFillingPackVisualSpace(parentContainer, childContainers, layout);
-  }
-}
-
-function calcWidthFillingPackVisualSpace(parentContainer, childContainers, layout) {
-
   var aspect_ratio;
 
   switch (layout.aspect_ratio) {
@@ -452,17 +432,62 @@ function calcWidthFillingPackVisualSpace(parentContainer, childContainers, layou
       aspect_ratio = 1;
       break;
     case 'parent':
-      aspect_ratio = 1.0 * parentContainer.visualspace.width / parentContainer.visualspace.height;
+      aspect_ratio = parentContainer.visualspace.width / parentContainer.visualspace.height;
       break;
   }
 
-  var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.width, parentContainer.visualspace.height, childContainers.length, aspect_ratio);
+  if (isVerticalDirection(layout.direction)) {
+    var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.width, parentContainer.visualspace.height, childContainers.length, aspect_ratio);
+  } else {
+    var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.height, parentContainer.visualspace.width, childContainers.length, 1 / aspect_ratio);
+  }
 
   applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo);
-
 }
 
 function applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo) {
+  if (isVerticalDirection(layout.direction)){
+    applyEdgeInfoVerticalDirection(parentContainer, childContainers, layout, edgeInfo);
+  } else {
+    applyEdgeInfoHorizontalDirection(parentContainer, childContainers, layout, edgeInfo);
+  }
+}
+
+function applyEdgeInfoHorizontalDirection(parentContainer, childContainers, layout, edgeInfo) {
+
+  var xOrig, yOrig, xInc, yInc, numVerticalElement, yOffset;
+
+  switch (layout.direction) {
+    case 'TBLR':
+      xOrig = 0;
+      yOrig = 0;
+      xInc = edgeInfo.remainingEdgeSideUnitLength;
+      yInc = edgeInfo.fillingEdgeSideUnitLength;
+      numVerticalElement = edgeInfo.fillingEdgeRepetitionCount;
+      break;
+    case 'BTLR':
+      xOrig = 0;
+      yOrig = parentContainer.visualspace.height - edgeInfo.remainingEdgeSideUnitLength;
+      xInc = edgeInfo.remainingEdgeSideUnitLength;
+      yInc = (-1.0) * edgeInfo.fillingEdgeSideUnitLength;
+      numVerticalElement = edgeInfo.fillingEdgeRepetitionCount;
+      break;
+    case 'TBRL':
+    case 'BTRL':
+      console.log('TODO');
+      break;
+  }
+
+  childContainers.forEach(function(c, i, all) {
+    c.visualspace.width = edgeInfo.remainingEdgeSideUnitLength;
+    c.visualspace.height = edgeInfo.fillingEdgeSideUnitLength;
+    c.visualspace.posX = xOrig + xInc * (Math.floor(i / numVerticalElement));
+    c.visualspace.posY = yOrig + yInc * (i % numVerticalElement);
+    c.visualspace.padding = layout.padding;
+  })
+}
+
+function applyEdgeInfoVerticalDirection(parentContainer, childContainers, layout, edgeInfo) {
 
   var xOrig, yOrig, xInc, yInc, numHoriElement, yOffset;
 
@@ -632,16 +657,33 @@ function getParents(containers) {
 }
 
 function buildEdgeInfoFromMinSize(parentContainer, minSize, layout) {
-
-  var height;
   var horizontalRepetitionCount = Math.floor(parentContainer.visualspace.width / minSize.width);
-  var verticalRepetitionCount = Math.floor(parentContainer.visualspace.height / minSize.height);;
+  var verticalRepetitionCount = Math.floor(parentContainer.visualspace.height / minSize.height);
 
+
+  return buildEdgeInfoByDirection(horizontalRepetitionCount, verticalRepetitionCount, minSize.width, minSize.height, layout);
+}
+
+function buildEdgeInfoByDirection(horizontalRepetitionCount, verticalRepetitionCount, width, height, layout) {
+
+  var fillingEdgeRepetitionCount, remainingEdgeRepetitionCount, fillingEdgeSideUnitLength, remainingEdgeSideUnitLength;
+
+  if (isVerticalDirection(layout.direction)) {
+    fillingEdgeRepetitionCount = horizontalRepetitionCount;
+    remainingEdgeRepetitionCount = verticalRepetitionCount;
+    fillingEdgeSideUnitLength = width;
+    remainingEdgeSideUnitLength = height;
+  } else {
+    fillingEdgeRepetitionCount = verticalRepetitionCount;
+    remainingEdgeRepetitionCount = horizontalRepetitionCount;
+    fillingEdgeSideUnitLength = height;
+    remainingEdgeSideUnitLength = width;
+  }
   return {
-    'fillingEdgeRepetitionCount': horizontalRepetitionCount,
-    'remainingEdgeRepetitionCount': verticalRepetitionCount,
-    'fillingEdgeSideUnitLength': minSize.width,
-    'remainingEdgeSideUnitLength': minSize.height
+    'fillingEdgeRepetitionCount': fillingEdgeRepetitionCount,
+    'remainingEdgeRepetitionCount': remainingEdgeRepetitionCount,
+    'fillingEdgeSideUnitLength': fillingEdgeSideUnitLength,
+    'remainingEdgeSideUnitLength': remainingEdgeSideUnitLength
   };
 }
 

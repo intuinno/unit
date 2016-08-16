@@ -19,7 +19,7 @@
     "aspect_ratio": "fillX",
     "size": {
       "type": "uniform",
-      "isShared": false
+      "isShared": true
     },
     "direction": "LRBT",
     "align": "LB",
@@ -116,7 +116,7 @@
       "key": "id",
       "isShared": false
     },
-    "aspect_ratio": "square",
+    "aspect_ratio": "maxfill",
     "size": {
       "type": "uniform",
       "isShared": true

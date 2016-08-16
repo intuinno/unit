@@ -9,11 +9,56 @@ exports.UnitChart = function(divId, spec) {
     var rootContainer = buildRootContainer(csv_data, spec);
     var layoutList = buildLayoutList(spec.layouts);
 
-    applyLayout(rootContainer, layoutList.head);
+    var childContainers = [rootContainer];
+    var currentLayout = layoutList.head;
+
+    while (currentLayout !== 'EndOfLayout') {
+      childContainers = applyLayout(childContainers, currentLayout);
+      currentLayout = currentLayout.child;
+    }
+
     drawUnit(rootContainer, spec, layoutList, divId);
   });
-
 };
+
+function applyLayout(containerList, layout) {
+
+  var childContainers = [];
+  var newSizeSharingAncestor;
+  var oldSizeSharingAncestor = getSharingAncestorContainer(containerList[0], layout, 'size');
+
+  containerList.forEach(function(container, i, all) {
+
+    newSizeSharingAncestor = getSharingAncestorContainer(container, layout, 'size');
+    var newContainers = makeContainers(container, layout);
+
+    if (newContainers.length > 0) {
+      calcVisualSpace(container, newContainers, layout);
+    }
+    container.contents = newContainers;
+    handleSharedSize(container, layout);
+    childContainers = childContainers.concat(newContainers);
+
+    if (newSizeSharingAncestor !== oldSizeSharingAncestor) {
+      applySharedSize(layout);
+      oldSizeSharingAncestor = newSizeSharingAncestor;
+    }
+  });
+
+  applySharedSize(layout);
+
+  return childContainers;
+}
+
+function handleSharedSize(container, layout) {
+
+  if (layout.size.isShared) {
+    if (!layout.hasOwnProperty('sizeSharingGroup')) {
+      layout.sizeSharingGroup = [];
+    }
+    layout.sizeSharingGroup = layout.sizeSharingGroup.concat(container.contents);
+  }
+}
 
 var defaultSetting = {
   layout: {
@@ -25,7 +70,6 @@ var defaultSetting = {
     }
   }
 }
-
 
 function buildRootContainer(csv_data, spec) {
   var myContainer = {};
@@ -187,7 +231,7 @@ function getCombination(n) {
 
 function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
 
-  var availableSpace = getAvailableSpace(parentContainer,layout);
+  var availableSpace = getAvailableSpace(parentContainer, layout);
 
   var unitLength = getUnit(availableSpace, childContainers, layout);
 
@@ -254,7 +298,7 @@ function getPosXforFillX(parentVisualspace, layout, childContainers) {
     case 'BTRL':
     case 'TBRL':
     case 'RL':
-      start = childContainers.length-1;
+      start = childContainers.length - 1;
       direction = -1;
       break;
     default:
@@ -265,7 +309,7 @@ function getPosXforFillX(parentVisualspace, layout, childContainers) {
     return c.visualspace.width + layout.margin.left + layout.margin.right;
   });
 
-  switch(layout.align) {
+  switch (layout.align) {
     case 'left':
     case 'LT':
     case 'LM':
@@ -276,7 +320,7 @@ function getPosXforFillX(parentVisualspace, layout, childContainers) {
     case 'CT':
     case 'CM':
     case 'CB':
-      offset = parentVisualspace.padding.left + (parentVisualspace.width - parentVisualspace.padding.left - parentVisualspace.padding.right)/2 - totalwidth/2;
+      offset = parentVisualspace.padding.left + (parentVisualspace.width - parentVisualspace.padding.left - parentVisualspace.padding.right) / 2 - totalwidth / 2;
       break;
     case 'right':
     case 'RT':
@@ -286,7 +330,7 @@ function getPosXforFillX(parentVisualspace, layout, childContainers) {
       break;
   }
 
-  childContainers.forEach(function(c,i, all) {
+  childContainers.forEach(function(c, i, all) {
     var index = start + direction * i;
     if (i === 0) {
       all[index].visualspace.posX = offset + layout.margin.left;
@@ -316,7 +360,7 @@ function getPosYforFillY(parentVisualspace, layout, childContainers) {
     case 'BTLR':
     case 'BTRL':
     case 'BT':
-      start = childContainers.length-1;
+      start = childContainers.length - 1;
       direction = -1;
       break;
     default:
@@ -327,7 +371,7 @@ function getPosYforFillY(parentVisualspace, layout, childContainers) {
     return c.visualspace.height + layout.margin.top + layout.margin.bottom;
   });
 
-  switch(layout.align) {
+  switch (layout.align) {
     case 'top':
     case 'RT':
     case 'CT':
@@ -338,7 +382,7 @@ function getPosYforFillY(parentVisualspace, layout, childContainers) {
     case 'LM':
     case 'RM':
     case 'CM':
-      offset = parentVisualspace.padding.top + (parentVisualspace.height - parentVisualspace.padding.top - parentVisualspace.padding.bottom)/2 - totalheight/2;
+      offset = parentVisualspace.padding.top + (parentVisualspace.height - parentVisualspace.padding.top - parentVisualspace.padding.bottom) / 2 - totalheight / 2;
       break;
     case 'bottom':
     case 'LB':
@@ -348,7 +392,7 @@ function getPosYforFillY(parentVisualspace, layout, childContainers) {
       break;
   }
 
-  childContainers.forEach(function(c,i, all) {
+  childContainers.forEach(function(c, i, all) {
     var index = start + direction * i;
     if (i === 0) {
       all[index].visualspace.posY = offset + layout.margin.top;
@@ -365,7 +409,7 @@ function getUnit(availableSpace, childContainers, layout) {
   var sum = d3.sum(childContainers, function(d) {
     return getValue(d, layout);
   });
-  return availableSpace/sum;
+  return availableSpace / sum;
 }
 
 function getValue(container, layout) {
@@ -601,47 +645,10 @@ function buildEdgeInfoFromMinSize(parentContainer, minSize, layout) {
   };
 }
 
-function applyLayout(container, layout) {
-  var newContainers = makeContainers(container, layout);
-  calcVisualSpace(container, newContainers, layout);
-
-  if (layout.child !== 'EndOfLayout') {
-    newContainers.forEach(function(c) {
-      applyLayout(c, layout.child);
-    });
-  }
-
-  container.contents = newContainers;
-  handleSharedSize(container, layout);
-
-
-
-  console.log('Fininshing', layout.name);
-}
-
-function handleSharedSize(container, layout) {
-
-  if (layout.size.isShared) {
-    if (!layout.hasOwnProperty('sizeSharingGroup')) {
-      layout.sizeSharingGroup = [];
-    }
-    layout.sizeSharingGroup = layout.sizeSharingGroup.concat(container.contents);
-  } else {
-    applySharedSize(layout.child);
-  }
-}
-
-
 function applySharedSize(layout) {
 
   if (layout === 'EndOfLayout' || layout.size.isShared !== true) {
     return;
-  }
-
-  if (layout.child != 'EndOfLayout') {
-    if (layout.child.size.isShared) {
-      applySharedSize(layout.child);
-    }
   }
 
   makeSharedSize(layout);
@@ -676,7 +683,7 @@ function applySharedUnitOnContainers(minUnit, layout) {
   var parentContainers = getParents(layout.sizeSharingGroup);
 
   parentContainers.forEach(function(d) {
-      calcFillGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
+    calcFillGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
   });
 }
 
@@ -685,9 +692,7 @@ function getMinUnitAmongContainers(layout) {
 
   var minUnit = d3.min(parentContainers, function(d) {
     var availableSpace = getAvailableSpace(d, layout);
-    var descendantContainers = buildLeafContainersArr(d, layout);
     var unit = getUnit(availableSpace, d.contents, layout);
-
     return unit;
   });
 

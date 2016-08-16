@@ -16,6 +16,9 @@ d3.json('./data/unit_column_chart.json', function(error,data){
 d3.json('./data/unit_column_chart_shared_mark.json', function(error,data){
   UnitChart('unit_column_chart_shared_mark', data);
 });
+d3.json('./data/horizontal_unit_column.json', function(error,data){
+  UnitChart('horizontal_unit_column', data);
+});
 
 
 //Hierarchy

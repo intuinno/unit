@@ -56,6 +56,13 @@ d3.json('./data/size_uniform_shared.json', function(error,data){
 d3.json('./data/size_sum_shared.json', function(error,data){
   UnitChart('size_sum_shared', data);
 });
+
+//violin
+d3.json('./data/violin.json', function(error,data){
+  UnitChart('violin', data);
+});
+
+
 var container = document.getElementById('jsoneditor');
 var options = {};
 var editor = new JSONEditor(container, options);

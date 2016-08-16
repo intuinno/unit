@@ -9,11 +9,56 @@ exports.UnitChart = function(divId, spec) {
     var rootContainer = buildRootContainer(csv_data, spec);
     var layoutList = buildLayoutList(spec.layouts);
 
-    applyLayout(rootContainer, layoutList.head);
+    var childContainers = [rootContainer];
+    var currentLayout = layoutList.head;
+
+    while (currentLayout !== 'EndOfLayout') {
+      childContainers = applyLayout(childContainers, currentLayout);
+      currentLayout = currentLayout.child;
+    }
+
     drawUnit(rootContainer, spec, layoutList, divId);
   });
-
 };
+
+function applyLayout(containerList, layout) {
+
+  var childContainers = [];
+  var newSizeSharingAncestor;
+  var oldSizeSharingAncestor = getSharingAncestorContainer(containerList[0], layout, 'size');
+
+  containerList.forEach(function(container, i, all) {
+
+    newSizeSharingAncestor = getSharingAncestorContainer(container, layout, 'size');
+    var newContainers = makeContainers(container, layout);
+
+    if (newContainers.length > 0) {
+      calcVisualSpace(container, newContainers, layout);
+    }
+    container.contents = newContainers;
+    handleSharedSize(container, layout);
+    childContainers = childContainers.concat(newContainers);
+
+    if (newSizeSharingAncestor !== oldSizeSharingAncestor) {
+      applySharedSize(layout);
+      oldSizeSharingAncestor = newSizeSharingAncestor;
+    }
+  });
+
+  applySharedSize(layout);
+
+  return childContainers;
+}
+
+function handleSharedSize(container, layout) {
+
+  if (layout.size.isShared) {
+    if (!layout.hasOwnProperty('sizeSharingGroup')) {
+      layout.sizeSharingGroup = [];
+    }
+    layout.sizeSharingGroup = layout.sizeSharingGroup.concat(container.contents);
+  }
+}
 
 var defaultSetting = {
   layout: {
@@ -25,7 +70,6 @@ var defaultSetting = {
     }
   }
 }
-
 
 function buildRootContainer(csv_data, spec) {
   var myContainer = {};
@@ -187,7 +231,7 @@ function getCombination(n) {
 
 function calcFillGridxyVisualSpace(parentContainer, childContainers, layout) {
 
-  var availableSpace = getAvailableSpace(parentContainer,layout);
+  var availableSpace = getAvailableSpace(parentContainer, layout);
 
   var unitLength = getUnit(availableSpace, childContainers, layout);
 
@@ -207,16 +251,13 @@ function calcFillGridxyVisualSpaceWithUnitLength(parentContainer, childContainer
 
       c.visualspace.height = parentVisualSpace.height - parentVisualSpace.padding.top - parentVisualSpace.padding.bottom - layout.margin.top - layout.margin.bottom;
 
-      if (i === 0) {
-        c.visualspace.posX = parentVisualSpace.padding.left + layout.margin.right;
-      } else {
-        c.visualspace.posX = all[i - 1].visualspace.posX + all[i - 1].visualspace.width + layout.margin.left + layout.margin.right;
-      }
-
       c.visualspace.posY = parentVisualSpace.padding.top + layout.margin.top;
 
       c.visualspace.padding = layout.padding;
     });
+
+    getPosXforFillX(parentVisualSpace, layout, childContainers);
+
   } else if (layout.aspect_ratio === 'fillY') {
 
     var unitHeight = unitLength;
@@ -239,62 +280,124 @@ function calcFillGridxyVisualSpaceWithUnitLength(parentContainer, childContainer
 
 }
 
+function getPosXforFillX(parentVisualspace, layout, childContainers) {
+
+  var start, direction, offset;
+
+  switch (layout.direction) {
+    case 'LRTB':
+    case 'LRBT':
+    case 'TBLR':
+    case 'BTLR':
+    case 'LR':
+      start = 0;
+      direction = 1;
+      break;
+    case 'RLBT':
+    case 'RLTB':
+    case 'BTRL':
+    case 'TBRL':
+    case 'RL':
+      start = childContainers.length - 1;
+      direction = -1;
+      break;
+    default:
+      console.log('Unsupported Layout Direction', layout);
+  }
+
+  var totalwidth = d3.sum(childContainers, function(c) {
+    return c.visualspace.width + layout.margin.left + layout.margin.right;
+  });
+
+  switch (layout.align) {
+    case 'left':
+    case 'LT':
+    case 'LM':
+    case 'LB':
+      offset = parentVisualspace.padding.left;
+      break;
+    case 'center':
+    case 'CT':
+    case 'CM':
+    case 'CB':
+      offset = parentVisualspace.padding.left + (parentVisualspace.width - parentVisualspace.padding.left - parentVisualspace.padding.right) / 2 - totalwidth / 2;
+      break;
+    case 'right':
+    case 'RT':
+    case 'RM':
+    case 'RB':
+      offset = parentVisualspace.width - parentVisualspace.padding.right - totalwidth;
+      break;
+  }
+
+  childContainers.forEach(function(c, i, all) {
+    var index = start + direction * i;
+    if (i === 0) {
+      all[index].visualspace.posX = offset + layout.margin.left;
+    } else {
+      all[index].visualspace.posX = all[index - direction].visualspace.posX + all[index - direction].visualspace.width + layout.margin.right + layout.margin.left;
+    }
+  });
+
+}
+
+
 function getPosYforFillY(parentVisualspace, layout, childContainers) {
 
   var start, direction, offset;
 
   switch (layout.direction) {
-    case "LRTB":
-    case "RLTB":
-    case "TBLR":
-    case "TBRL":
-    case "TB":
+    case 'LRTB':
+    case 'RLTB':
+    case 'TBLR':
+    case 'TBRL':
+    case 'TB':
       start = 0;
       direction = 1;
       break;
-    case "LRBT":
-    case "RLBT":
-    case "BTLR":
-    case "BTRL":
-    case "BT":
-      start = childContainers.length;
+    case 'LRBT':
+    case 'RLBT':
+    case 'BTLR':
+    case 'BTRL':
+    case 'BT':
+      start = childContainers.length - 1;
       direction = -1;
       break;
     default:
-      console.log("Unsupported Layout Direction", layout);
+      console.log('Unsupported Layout Direction', layout);
   }
 
   var totalheight = d3.sum(childContainers, function(c) {
     return c.visualspace.height + layout.margin.top + layout.margin.bottom;
   });
 
-  switch(layout.align) {
-    case "top":
-    case "RT":
-    case "CT":
-    case "LT":
+  switch (layout.align) {
+    case 'top':
+    case 'RT':
+    case 'CT':
+    case 'LT':
       offset = parentVisualspace.padding.top;
       break;
-    case "middle":
-    case "LM":
-    case "RM":
-    case "CM":
-      offset = parentVisualspace.padding.top + (parentVisualspace.height - parentVisualspace.padding.top - parentVisualspace.padding.bottom)/2 - totalheight/2;
+    case 'middle':
+    case 'LM':
+    case 'RM':
+    case 'CM':
+      offset = parentVisualspace.padding.top + (parentVisualspace.height - parentVisualspace.padding.top - parentVisualspace.padding.bottom) / 2 - totalheight / 2;
       break;
-    case "bottom":
-    case "LB":
-    case "CB":
-    case "RB":
+    case 'bottom':
+    case 'LB':
+    case 'CB':
+    case 'RB':
       offset = parentVisualspace.height - parentVisualspace.padding.bottom - totalheight;
       break;
   }
 
-  childContainers.forEach(function(c,i, all) {
+  childContainers.forEach(function(c, i, all) {
     var index = start + direction * i;
-    if (index === 0) {
-      c.visualspace.posY = offset + layout.margin.top;
+    if (i === 0) {
+      all[index].visualspace.posY = offset + layout.margin.top;
     } else {
-      c.visualspace.posY = all[index - 1].visualspace.posY + all[index - 1].visualspace.height + layout.margin.bottom + layout.margin.top;
+      all[index].visualspace.posY = all[index - direction].visualspace.posY + all[index - direction].visualspace.height + layout.margin.bottom + layout.margin.top;
     }
   });
 
@@ -306,20 +409,20 @@ function getUnit(availableSpace, childContainers, layout) {
   var sum = d3.sum(childContainers, function(d) {
     return getValue(d, layout);
   });
-  return availableSpace/sum;
+  return availableSpace / sum;
 }
 
 function getValue(container, layout) {
   switch (layout.size.type) {
-    case "uniform":
+    case 'uniform':
       return 1;
       break;
-    case "sum":
+    case 'sum':
       return d3.sum(container.contents, function(d) {
         return d[layout.size.key];
       });
       break;
-    case "count":
+    case 'count':
       return container.contents.length;
       break;
   }
@@ -542,47 +645,10 @@ function buildEdgeInfoFromMinSize(parentContainer, minSize, layout) {
   };
 }
 
-function applyLayout(container, layout) {
-  var newContainers = makeContainers(container, layout);
-  calcVisualSpace(container, newContainers, layout);
-
-  if (layout.child !== 'EndOfLayout') {
-    newContainers.forEach(function(c) {
-      applyLayout(c, layout.child);
-    });
-  }
-
-  container.contents = newContainers;
-  handleSharedSize(container, layout);
-
-
-
-  console.log('Fininshing', layout.name);
-}
-
-function handleSharedSize(container, layout) {
-
-  if (layout.size.isShared) {
-    if (!layout.hasOwnProperty('sizeSharingGroup')) {
-      layout.sizeSharingGroup = [];
-    }
-    layout.sizeSharingGroup = layout.sizeSharingGroup.concat(container.contents);
-  } else {
-    applySharedSize(layout.child);
-  }
-}
-
-
 function applySharedSize(layout) {
 
   if (layout === 'EndOfLayout' || layout.size.isShared !== true) {
     return;
-  }
-
-  if (layout.child != 'EndOfLayout') {
-    if (layout.child.size.isShared) {
-      applySharedSize(layout.child);
-    }
   }
 
   makeSharedSize(layout);
@@ -617,7 +683,7 @@ function applySharedUnitOnContainers(minUnit, layout) {
   var parentContainers = getParents(layout.sizeSharingGroup);
 
   parentContainers.forEach(function(d) {
-      calcFillGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
+    calcFillGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
   });
 }
 
@@ -626,9 +692,7 @@ function getMinUnitAmongContainers(layout) {
 
   var minUnit = d3.min(parentContainers, function(d) {
     var availableSpace = getAvailableSpace(d, layout);
-    var descendantContainers = buildLeafContainersArr(d, layout);
     var unit = getUnit(availableSpace, d.contents, layout);
-
     return unit;
   });
 
@@ -691,12 +755,12 @@ function makeContainersForNumericalVar(sharingDomain, container, layout) {
   var tempScale = d3.scaleLinear().domain([0, groupby.numBin]).range(extent);
   var tickArray = d3.range(groupby.numBin + 1).map(tempScale);
 
-  var nullGroup = sharingDomain.filter(function(d) {
+  var nullGroup = container.contents.filter(function(d) {
     return d[groupby.key] == '';
 
   });
 
-  var valueGroup = sharingDomain.filter(function(d) {
+  var valueGroup = container.contents.filter(function(d) {
     return d[groupby.key] != '';
   });
 

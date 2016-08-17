@@ -1,64 +1,103 @@
 {
-  "title" : "Titanic",
+  "title": "Titanic",
   "data": "data/titanic.csv",
   "width": 320,
   "height": 240,
-  "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
-  "layouts": [
-    {
-      "name": "layout1",
-      "type": "gridxy",
-      "groupby": {
-        "key": "Class",
-        "isKeyShared": false
-      },
-      "aspect_ratio":"fillX",
-      "size": {
-        "type":"uniform",
-        "isShared": false
-      },
-      "direction": "LRBT",
-      "align": "LB",
-      "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
-      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
+  "padding": {
+    "top": 5,
+    "left": 5,
+    "bottom": 5,
+    "right": 5
+  },
+  "layouts": [{
+    "name": "layout1",
+    "type": "gridxy",
+    "subgroup": {
+      "type": "groupby",
+      "key": "Class",
+      "isShared": false
     },
-    {
-      "name": "layout2",
-      "type": "gridxy",
-      "groupby": {
-        "key": "Sex",
-        "isKeyShared": true
-      },
-      "aspect_ratio":"fillY",
-      "size": {
-        "type": "uniform",
-        "isShared": true
-      },
-      "direction": "LRTB",
-      "align": "LB",
-      "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
-      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
+    "aspect_ratio": "fillX",
+    "size": {
+      "type": "uniform",
+      "isShared": false
     },
-    {
-      "name": "layout3",
-      "type": "gridxy",
-      "groupby": {
-        "key": "id",
-        "isKeyShared": false
-      },
-      "aspect_ratio":"square",
-      "size": {
-        "type":"uniform",
-        "isShare": true
-      },
-      "direction": "LRBT",
-      "align": "LB",
-      "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
-      "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5}
-    }],
+    "direction": "LRBT",
+    "align": "LB",
+    "margin": {
+      "top": 5,
+      "left": 5,
+      "bottom": 5,
+      "right": 5
+    },
+    "padding": {
+      "top": 5,
+      "left": 5,
+      "bottom": 5,
+      "right": 5
+    }
+  }, {
+    "name": "layout2",
+    "type": "gridxy",
+    "subgroup": {
+      "type": "groupby",
+      "key": "Sex",
+      "isShared": true
+    },
+    "aspect_ratio": "fillY",
+    "size": {
+      "type": "uniform",
+      "isShared": true
+    },
+    "direction": "LRTB",
+    "align": "LB",
+    "margin": {
+      "top": 5,
+      "left": 5,
+      "bottom": 5,
+      "right": 5
+    },
+    "padding": {
+      "top": 5,
+      "left": 5,
+      "bottom": 5,
+      "right": 5
+    }
+  }, {
+    "name": "layout3",
+    "type": "gridxy",
+    "subgroup": {
+      "type": "flatten"
+    },
+    "aspect_ratio": "square",
+    "size": {
+      "type": "uniform",
+      "isShared": false
+    },
+    "direction": "LRBT",
+    "align": "LB",
+    "margin": {
+      "top": 5,
+      "left": 5,
+      "bottom": 5,
+      "right": 5
+    },
+    "padding": {
+      "top": 5,
+      "left": 5,
+      "bottom": 5,
+      "right": 5
+    },
+    "sort": {
+      "key": "Survived"
+    }
+  }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key": "Survived",
+      "type": "categorical"
+    },
     "size": {
       "type": "max",
       "isShared": false

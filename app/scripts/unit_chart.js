@@ -749,8 +749,6 @@ function getAvailableSpace(container, layout) {
 }
 
 function makeSharedSizePack(layout) {
-  console.log(layout);
-
   var minSize = getMinAmongContainers(layout);
 
   applySharedSizeOnContainers(minSize, layout);
@@ -805,9 +803,17 @@ function makeContainersForFlatten(container, layout) {
 
   if(layout.hasOwnProperty("sort")) {
     leaves.sort(function(a,b) {
-      var value = a.contents[0][layout.sort.key] - b.contents[0][layout.sort.key];
+      var Avalue = a.contents[0][layout.sort.key];
+      var Bvalue = b.contents[0][layout.sort.key];
 
-      return (layout.sort.direction === "ascending")? value: -1*value;
+      if(layout.sort.type === "numerical") {
+        Avalue = Number(Avalue);
+        Bvalue = Number(Bvalue);
+      }
+
+      var ascending = (layout.sort.direction === "ascending")? 1: -1
+
+      return (Avalue > Bvalue)? ascending: -1*ascending;
     });
   }
 

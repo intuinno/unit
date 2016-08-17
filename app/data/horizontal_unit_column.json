@@ -12,7 +12,8 @@
   "layouts": [{
     "name": "layout1",
     "type": "gridxy",
-    "groupby": {
+    "subgroup": {
+      "type":"groupby",
       "key": "pclass",
       "isShared": false
     },
@@ -44,9 +45,8 @@
   }, {
     "name": "layout2",
     "type": "gridxy",
-    "groupby": {
-      "key": "id",
-      "isShared": false
+    "subgroup": {
+      "type":"flatten"
     },
     "aspect_ratio": "maxfill",
     "size": {
@@ -72,11 +72,17 @@
       "stroke": "red",
       "stroke-width": 1,
       "opacity": 0.5
+    },
+    "sort":{
+      "key":"survived"
     }
   }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key":"survived",
+      "type":"categorical"
+    },
     "size": {
       "type": "max",
       "isShared": false

@@ -12,7 +12,8 @@
   "layouts": [{
     "name": "layout1",
     "type": "gridxy",
-    "groupby": {
+    "subgroup": {
+      "type": "groupby",
       "key": "pclass",
       "isShared": false
     },
@@ -44,9 +45,8 @@
   }, {
     "name": "layout2",
     "type": "gridxy",
-    "groupby": {
-      "key": "id",
-      "isShared": false
+    "subgroup": {
+      "type": "flatten"
     },
     "aspect_ratio": "fillY",
     "size": {
@@ -72,11 +72,18 @@
       "stroke": "green",
       "stroke-width": 0,
       "opacity": 0.5
+    },
+    "sort": {
+      "key":"fare",
+      "type":"numerical"
     }
   }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key": "survived",
+      "type": "categorical"
+    },
     "size": {
       "type": "max",
       "isShared": false

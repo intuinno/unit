@@ -1,47 +1,76 @@
 {
-  "title" : "Titanic",
+  "title": "Titanic",
   "data": "data/titanic3.csv",
   "width": 320,
   "height": 240,
-  "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10},
-  "layouts": [
-    {
-      "name": "layout1",
-      "type": "gridxy",
-      "groupby": {
-        "key": "pclass",
-        "isShared": false
-      },
-      "aspect_ratio":"fillX",
-      "size": {
-        "type":"uniform",
-        "isShared": false
-      },
-      "direction": "LRBT",
-      "align": "LB",
-      "margin": {"top": 10, "left": 5, "bottom": 5, "right": 10},
-      "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10}
+  "padding": {
+    "top": 10,
+    "left": 30,
+    "bottom": 30,
+    "right": 10
+  },
+  "layouts": [{
+    "name": "layout1",
+    "type": "gridxy",
+    "subgroup": {
+      "type": "groupby",
+      "key": "pclass",
+      "isShared": false
     },
-    {
-      "name": "layout2",
-      "type": "gridxy",
-      "groupby": {
-        "key": "id",
-        "isShared": false
-      },
-      "aspect_ratio":"square",
-      "size": {
-        "type":"uniform",
-        "isShared": false
-      },
-      "direction": "LRBT",
-      "align": "LB",
-      "margin": {"top": 10, "left": 30, "bottom": 30, "right": 10},
-      "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10}
-    }],
+    "aspect_ratio": "fillX",
+    "size": {
+      "type": "uniform",
+      "isShared": false
+    },
+    "direction": "LRBT",
+    "align": "LB",
+    "margin": {
+      "top": 10,
+      "left": 5,
+      "bottom": 5,
+      "right": 10
+    },
+    "padding": {
+      "top": 10,
+      "left": 30,
+      "bottom": 30,
+      "right": 10
+    }
+  }, {
+    "name": "layout2",
+    "type": "gridxy",
+    "subgroup": {
+      "type": "flatten"
+    },
+    "aspect_ratio": "square",
+    "size": {
+      "type": "uniform",
+      "isShared": false
+    },
+    "direction": "LRBT",
+    "align": "LB",
+    "margin": {
+      "top": 10,
+      "left": 30,
+      "bottom": 30,
+      "right": 10
+    },
+    "padding": {
+      "top": 10,
+      "left": 30,
+      "bottom": 30,
+      "right": 10
+    },
+    "sort": {
+      "key":"survived"
+    }
+  }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key": "survived",
+      "type": "categorical"
+      },
     "size": {
       "type": "max",
       "isShared": false

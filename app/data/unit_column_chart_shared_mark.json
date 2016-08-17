@@ -8,7 +8,8 @@
     {
       "name": "layout1",
       "type": "gridxy",
-      "groupby": {
+      "subgroup": {
+        "type":"groupby",
         "key": "pclass",
         "isShared": false
       },
@@ -25,10 +26,8 @@
     {
       "name": "layout2",
       "type": "gridxy",
-      "groupby": {
-        "key": "id",
-        "isShared": false
-      },
+      "subgroup": {
+        "type":"flatten"      },
       "aspect_ratio":"square",
       "size": {
         "type":"uniform",
@@ -37,11 +36,17 @@
       "direction": "LRBT",
       "align": "LB",
       "margin": {"top": 10, "left": 30, "bottom": 30, "right": 10},
-      "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10}
+      "padding": {"top": 10, "left": 30, "bottom": 30, "right": 10},
+      "sort":{
+        "key":"survived"
+      }
     }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key":"survived",
+      "type":"categorical"
+    },
     "size": {
       "type": "max",
       "isShared": true

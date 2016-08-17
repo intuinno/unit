@@ -8,9 +8,9 @@
     {
       "name": "layout1",
       "type": "gridxy",
-      "groupby": {
+      "subgroup": {
         "key": "age",
-        "type": "numerical",
+        "type": "bin",
         "numBin": 15,
         "isShared": false
       },
@@ -24,16 +24,17 @@
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "box": {
-        "fill": "blue",
+        "fill": "none",
         "stroke": "black",
-        "stroke-width": 1,
+        "stroke-width": 0,
         "opacity":0.3
       }
     },
     {
       "name": "layout2",
       "type": "gridxy",
-      "groupby": {
+      "subgroup": {
+        "type":"groupby",
         "key": "pclass",
         "isShared": false
       },
@@ -47,18 +48,17 @@
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "box": {
-        "fill": "green",
-        "stroke": "red",
-        "stroke-width": 2,
-        "opacity":0.5
+        "fill": "none",
+        "stroke": "green",
+        "stroke-width": 1,
+        "opacity":1
       }
     },
     {
       "name": "layout3",
       "type": "gridxy",
-      "groupby": {
-        "key": "id",
-        "isShared": false
+      "subgroup": {
+        "type":"flatten"
       },
       "aspect_ratio":"maxfill",
       "size": {
@@ -70,15 +70,21 @@
       "margin": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "padding": {"top": 5, "left": 5, "bottom": 5, "right": 5},
       "box": {
-        "fill": "blue",
+        "fill": "none",
         "stroke": "black",
         "stroke-width": 1,
-        "opacity":0.03
+        "opacity":1
+      },
+      "sort":{
+        "key":"survived"
       }
     }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key":"survived",
+      "type":"categorical"
+    },
     "size": {
       "type": "max",
       "isShared": false

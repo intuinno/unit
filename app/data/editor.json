@@ -12,7 +12,8 @@
   "layouts": [{
     "name": "layout1",
     "type": "gridxy",
-    "groupby": {
+    "subgroup": {
+      "type":"groupby",
       "key": "pclass",
       "isShared": false
     },
@@ -40,13 +41,17 @@
       "stroke": "black",
       "stroke-width": 1,
       "opacity": 0.3
+    },
+    "sort": {
+      "key": "pclass",
+      "direction":"ascending"
     }
   }, {
     "name": "layout2",
     "type": "gridxy",
-    "groupby": {
+    "subgroup": {
+      "type":"bin",
       "key": "age",
-      "type": "numerical",
       "numBin": 19,
       "isShared": true
     },
@@ -74,14 +79,16 @@
       "stroke": "red",
       "stroke-width": 1,
       "opacity": 0.5
+    },
+    "sort": {
+      "key":"age",
+      "direction":"ascending"
     }
   }, {
     "name": "layout3",
     "type": "gridxy",
-    "groupby": {
-      "key": "age",
-      "type": "numerical",
-      "numBin": 19,
+    "subgroup": {
+      "type": "passthrough",
       "isShared": true
     },
     "aspect_ratio": "fillX",
@@ -112,16 +119,15 @@
   }, {
     "name": "layout4",
     "type": "gridxy",
-    "groupby": {
-      "key": "id",
-      "isShared": false
+    "subgroup": {
+      "type": "flatten"
     },
     "aspect_ratio": "maxfill",
     "size": {
       "type": "uniform",
       "isShared": false
     },
-    "direction": "LRBT",
+    "direction": "BTLR",
     "align": "LB",
     "margin": {
       "top": 0,
@@ -140,11 +146,19 @@
       "stroke": "red",
       "stroke-width": 0,
       "opacity": 0.5
+    },
+    "sort": {
+      "type":"categorical",
+      "key":"survived",
+      "direction":"ascending"
     }
   }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key": "survived",
+      "type": "categorical"
+      },
     "size": {
       "type": "max",
       "isShared": false

@@ -432,7 +432,7 @@ function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
       aspect_ratio = 1;
       break;
     case 'parent':
-      aspect_ratio = (parentContainer.visualspace.width / parentContainer.visualspace.height);
+      aspect_ratio = parentContainer.visualspace.width / parentContainer.visualspace.height;
       break;
   }
 
@@ -446,7 +446,7 @@ function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
 }
 
 function applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo) {
-  if (isVerticalDirection(layout.direction)){
+  if (isVerticalDirection(layout.direction)) {
     applyEdgeInfoVerticalDirection(parentContainer, childContainers, layout, edgeInfo);
   } else {
     applyEdgeInfoHorizontalDirection(parentContainer, childContainers, layout, edgeInfo);
@@ -668,7 +668,7 @@ function buildEdgeInfoByDirection(horizontalRepetitionCount, verticalRepetitionC
 
   var fillingEdgeRepetitionCount, remainingEdgeRepetitionCount, fillingEdgeSideUnitLength, remainingEdgeSideUnitLength;
 
-  if (isVerticalDirection(layout.direction)) {
+  if (isVerticalDirection(layout)) {
     fillingEdgeRepetitionCount = horizontalRepetitionCount;
     remainingEdgeRepetitionCount = verticalRepetitionCount;
     fillingEdgeSideUnitLength = width;
@@ -945,7 +945,7 @@ function drawUnit(container, spec, layoutList, divId) {
 
   });
 
-  currentGroup.append('circle')
+  var marks = currentGroup.append('circle')
     .attr('cx', function(d) {
       return d.visualspace.width / 2;
     })
@@ -956,9 +956,24 @@ function drawUnit(container, spec, layoutList, divId) {
       return calcRadius(d, container, markPolicy, layoutList);
     })
     .style('fill', function(d) {
-      return 'purple'
+      return 'purple';
     });
 
+  setMarksColor(marks, container, markPolicy, layoutList);
+
+}
+
+function setMarksColor(marks, rootContainer, markPolicy, layoutList) {
+  var leafContainersArr = buildLeafContainersArr(rootContainer, layoutList.head);
+  var color;
+  if (markPolicy.color.type === "categorical") {
+    color = d3.scaleOrdinal(d3.schemeCategory10);
+  } else {
+    console.log("TODO");
+  }
+  marks.style('fill', function(d) {
+    return color(d[markPolicy.color.key]);
+  });
 }
 
 function calcRadius(leafContainer, rootContainer, markPolicy, layoutList) {

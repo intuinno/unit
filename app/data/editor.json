@@ -144,7 +144,10 @@
   }],
   "mark": {
     "shape": "circle",
-    "color": "survival",
+    "color": {
+      "key": "survived",
+      "type": "categorical"
+      },
     "size": {
       "type": "max",
       "isShared": false

@@ -144,9 +144,6 @@ function emptyContainersFromKeys(data, groupby) {
 
 function calcVisualSpace(parentContainer, childContainers, layout) {
 
-  console.log('calcVisualSpace', layout.name);
-
-
   layout.containers = childContainers;
 
   switch (layout.type) {
@@ -446,7 +443,7 @@ function calcPackGridxyVisualSpace(parentContainer, childContainers, layout) {
 }
 
 function applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo) {
-  if (isVerticalDirection(layout.direction)){
+  if (isVerticalDirection(layout.direction)) {
     applyEdgeInfoVerticalDirection(parentContainer, childContainers, layout, edgeInfo);
   } else {
     applyEdgeInfoHorizontalDirection(parentContainer, childContainers, layout, edgeInfo);
@@ -813,8 +810,6 @@ function makeContainersForNumericalVar(sharingDomain, container, layout) {
       return +d[groupby.key];
     })(valueGroup);
 
-  console.log(bins);
-
   nullGroup = [nullGroup];
   nullGroup.x0 = '';
   nullGroup.x1 = '';
@@ -945,7 +940,7 @@ function drawUnit(container, spec, layoutList, divId) {
 
   });
 
-  currentGroup.append('circle')
+  var marks = currentGroup.append('circle')
     .attr('cx', function(d) {
       return d.visualspace.width / 2;
     })
@@ -958,7 +953,21 @@ function drawUnit(container, spec, layoutList, divId) {
     .style('fill', function(d) {
       return 'purple'
     });
+  setMarksColor(marks, container, markPolicy, layoutList);
 
+}
+
+function setMarksColor(marks, rootContainer, markPolicy, layoutList) {
+  var leafContainersArr = buildLeafContainersArr(rootContainer, layoutList.head);
+  var color;
+  if (markPolicy.color.type === "categorical") {
+    color = d3.scaleOrdinal(d3.schemeCategory10);
+  } else {
+    console.log("TODO");
+  }
+  marks.style('fill', function(d) {
+    return color(d.contents[0][markPolicy.color.key]);
+  });
 }
 
 function calcRadius(leafContainer, rootContainer, markPolicy, layoutList) {

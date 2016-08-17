@@ -758,25 +758,69 @@ function makeSharedSizePack(layout) {
 
 function makeContainers(container, layout) {
 
-  var sharingAncestorContainer = getSharingAncestorContainer(container, layout, 'groupby');
+  var sharingAncestorContainer = getSharingAncestorContainer(container, layout, 'subgroup');
 
   var sharingDomain = getSharingDomain(sharingAncestorContainer);
+  var childContainers;
 
-  if (layout.groupby.hasOwnProperty('type') && layout.groupby.type === 'numerical') {
-    return makeContainersForNumericalVar(sharingDomain, container, layout);
-  } else {
-    return makeContainersForCategoricalVar(sharingDomain, container, layout);
+  switch (layout.subgroup.type) {
+    case "groupby":
+      childContainers =  makeContainersForCategoricalVar(sharingDomain, container, layout);
+      break;
+    case "bin":
+      childContainers = makeContainersForNumericalVar(sharingDomain, container, layout);
+      break;
+    case "passthrough":
+      childContainers =  makeContainersForPassthrough(container, layout);
+      break;
+    case "flatten":
+      childContainers = makeContainersForFlatten(container, layout);
+      break;
   }
 
+  return childContainers;
+}
+
+
+
+
+function makeContainersForPassthrough(container, layout) {
+  return [{
+    'contents': container.contents,
+    'label': container.label,
+     'visualspace': {},
+    'parent': container
+  }];
+}
+
+function makeContainersForFlatten(container, layout) {
+  var leaves = container.contents.map (function(c,i){
+    return {
+      'contents': [c],
+      'label': i,
+      'visualspace': {},
+      'parent': container
+    };
+  });
+
+  if(layout.hasOwnProperty("sort")) {
+    leaves.sort(function(a,b) {
+      var value = a.contents[0][layout.sort.key] - b.contents[0][layout.sort.key];
+
+      return (layout.sort.direction === "ascending")? value: -1*value;
+    });
+  }
+
+  return leaves;
 }
 
 function makeContainersForCategoricalVar(sharingDomain, container, layout) {
 
-  var newContainers = emptyContainersFromKeys(sharingDomain, layout.groupby.key);
+  var newContainers = emptyContainersFromKeys(sharingDomain, layout.subgroup.key);
 
   newContainers.forEach(function(c, i, all) {
     c.contents = container.contents.filter(function(d) {
-      return d[layout.groupby.key] == c.label;
+      return d[layout.subgroup.key] == c.label;
     });
     c.parent = container;
   });
@@ -785,29 +829,31 @@ function makeContainersForCategoricalVar(sharingDomain, container, layout) {
 
 function makeContainersForNumericalVar(sharingDomain, container, layout) {
 
-  var groupby = layout.groupby;
+  var subgroup = layout.subgroup;
 
   var extent = d3.extent(sharingDomain, function(d) {
-    return +d[groupby.key];
+    return +d[subgroup.key];
   });
 
-  var tempScale = d3.scaleLinear().domain([0, groupby.numBin]).range(extent);
-  var tickArray = d3.range(groupby.numBin + 1).map(tempScale);
+  var tempScale = d3.scaleLinear().domain([0, subgroup.numBin]).range(extent);
+  var tickArray = d3.range(subgroup.numBin + 1).map(tempScale);
+
+
 
   var nullGroup = container.contents.filter(function(d) {
-    return d[groupby.key] == '';
+    return d[subgroup.key] == '';
 
   });
 
   var valueGroup = container.contents.filter(function(d) {
-    return d[groupby.key] != '';
+    return d[subgroup.key] != '';
   });
 
   var bins = d3.histogram()
     .domain(extent)
     .thresholds(tickArray)
     .value(function(d) {
-      return +d[groupby.key];
+      return +d[subgroup.key];
     })(valueGroup);
 
   nullGroup = [nullGroup];
@@ -830,6 +876,10 @@ function makeContainersForNumericalVar(sharingDomain, container, layout) {
 }
 
 function getSharingAncestorContainer(container, layout, item) {
+
+  if (layout.type === "flatten") {
+    return container;
+  }
 
   if (layout[item].isShared) {
     if (container.parent !== 'RootContainer') {

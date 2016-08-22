@@ -762,16 +762,16 @@ function makeContainers(container, layout) {
   var childContainers;
 
   switch (layout.subgroup.type) {
-    case "groupby":
+    case 'groupby':
       childContainers =  makeContainersForCategoricalVar(sharingDomain, container, layout);
       break;
-    case "bin":
+    case 'bin':
       childContainers = makeContainersForNumericalVar(sharingDomain, container, layout);
       break;
-    case "passthrough":
+    case 'passthrough':
       childContainers =  makeContainersForPassthrough(container, layout);
       break;
-    case "flatten":
+    case 'flatten':
       childContainers = makeContainersForFlatten(container, layout);
       break;
   }
@@ -801,17 +801,17 @@ function makeContainersForFlatten(container, layout) {
     };
   });
 
-  if(layout.hasOwnProperty("sort")) {
+  if(layout.hasOwnProperty('sort')) {
     leaves.sort(function(a,b) {
       var Avalue = a.contents[0][layout.sort.key];
       var Bvalue = b.contents[0][layout.sort.key];
 
-      if(layout.sort.type === "numerical") {
+      if(layout.sort.type === 'numerical') {
         Avalue = Number(Avalue);
         Bvalue = Number(Bvalue);
       }
 
-      var ascending = (layout.sort.direction === "ascending")? 1: -1
+      var ascending = (layout.sort.direction === 'ascending')? 1: -1
 
       return (Avalue > Bvalue)? ascending: -1*ascending;
     });
@@ -883,7 +883,7 @@ function makeContainersForNumericalVar(sharingDomain, container, layout) {
 
 function getSharingAncestorContainer(container, layout, item) {
 
-  if (layout.type === "flatten") {
+  if (layout.type === 'flatten') {
     return container;
   }
 
@@ -1016,10 +1016,10 @@ function drawUnit(container, spec, layoutList, divId) {
 function setMarksColor(marks, rootContainer, markPolicy, layoutList) {
   var leafContainersArr = buildLeafContainersArr(rootContainer, layoutList.head);
   var color;
-  if (markPolicy.color.type === "categorical") {
+  if (markPolicy.color.type === 'categorical') {
     color = d3.scaleOrdinal(d3.schemeCategory10);
   } else {
-    console.log("TODO");
+    console.log('TODO');
   }
   marks.style('fill', function(d) {
     return color(d.contents[0][markPolicy.color.key]);

@@ -763,13 +763,13 @@ function makeContainers(container, layout) {
 
   switch (layout.subgroup.type) {
     case 'groupby':
-      childContainers =  makeContainersForCategoricalVar(sharingDomain, container, layout);
+      childContainers = makeContainersForCategoricalVar(sharingDomain, container, layout);
       break;
     case 'bin':
       childContainers = makeContainersForNumericalVar(sharingDomain, container, layout);
       break;
     case 'passthrough':
-      childContainers =  makeContainersForPassthrough(container, layout);
+      childContainers = makeContainersForPassthrough(container, layout);
       break;
     case 'flatten':
       childContainers = makeContainersForFlatten(container, layout);
@@ -786,13 +786,13 @@ function makeContainersForPassthrough(container, layout) {
   return [{
     'contents': container.contents,
     'label': container.label,
-     'visualspace': {},
+    'visualspace': {},
     'parent': container
   }];
 }
 
 function makeContainersForFlatten(container, layout) {
-  var leaves = container.contents.map (function(c,i){
+  var leaves = container.contents.map(function(c, i) {
     return {
       'contents': [c],
       'label': i,
@@ -801,19 +801,19 @@ function makeContainersForFlatten(container, layout) {
     };
   });
 
-  if(layout.hasOwnProperty('sort')) {
-    leaves.sort(function(a,b) {
+  if (layout.hasOwnProperty('sort')) {
+    leaves.sort(function(a, b) {
       var Avalue = a.contents[0][layout.sort.key];
       var Bvalue = b.contents[0][layout.sort.key];
 
-      if(layout.sort.type === 'numerical') {
+      if (layout.sort.type === 'numerical') {
         Avalue = Number(Avalue);
         Bvalue = Number(Bvalue);
       }
 
-      var ascending = (layout.sort.direction === 'ascending')? 1: -1
+      var ascending = (layout.sort.direction === 'ascending') ? 1 : -1
 
-      return (Avalue > Bvalue)? ascending: -1*ascending;
+      return (Avalue > Bvalue) ? ascending : -1 * ascending;
     });
   }
 
@@ -996,19 +996,48 @@ function drawUnit(container, spec, layoutList, divId) {
 
   });
 
-  var marks = currentGroup.append('circle')
-    .attr('cx', function(d) {
-      return d.visualspace.width / 2;
-    })
-    .attr('cy', function(d) {
-      return d.visualspace.height / 2;
-    })
-    .attr('r', function(d) {
-      return calcRadius(d, container, markPolicy, layoutList);
-    })
-    .style('fill', function(d) {
-      return 'purple'
-    });
+  switch (markPolicy.shape) {
+    case "circle":
+      var marks = currentGroup.append('circle')
+        .attr('cx', function(d) {
+          return d.visualspace.width / 2;
+        })
+        .attr('cy', function(d) {
+          return d.visualspace.height / 2;
+        })
+        .attr('r', function(d) {
+          return calcRadius(d, container, markPolicy, layoutList);
+        })
+        .style('fill', function(d) {
+          return 'purple'
+        });
+      break;
+
+    case "rect":
+      var marks = currentGroup.append('rect')
+        .attr('x', function(d) {
+          return 0;
+        })
+        .attr('y', function(d) {
+          return 0;
+        })
+        .attr('width', function(d) {
+          return d.visualspace.width;
+        })
+        .attr('height', function(d) {
+          return d.visualspace.height;
+        })
+        .style('fill', function(d) {
+          return 'purple'
+        });;
+      break;
+    default:
+      console.log('You should not see this');
+      break;
+
+
+  }
+
   setMarksColor(marks, container, markPolicy, layoutList);
 
 }

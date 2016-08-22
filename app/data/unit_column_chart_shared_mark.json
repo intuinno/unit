@@ -42,7 +42,7 @@
       }
     }],
   "mark": {
-    "shape": "circle",
+    "shape": "rect",
     "color": {
       "key":"survived",
       "type":"categorical"

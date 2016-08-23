@@ -19,7 +19,7 @@ module.exports = function(grunt) {
     cdnify: 'grunt-google-cdn'
   });
 
-  require('load-grunt-tasks')(grunt);
+  grunt.loadNpmTasks('grunt-gh-pages');
 
   // Configurable paths for the application
   var appConfig = {
@@ -34,6 +34,14 @@ module.exports = function(grunt) {
     yeoman: appConfig,
 
     // Watches files for changes and runs tasks based on the changed files
+
+    'gh-pages': {
+    options: {
+      base: 'dist'
+    },
+    src: ['**']
+  },
+
 
     watch: {
       bower: {
@@ -408,7 +416,8 @@ module.exports = function(grunt) {
             '*.{ico,png,txt}',
             '*.html',
             'images/{,*/}*.{webp}',
-            'styles/fonts/{,*/}*.*'
+            'styles/fonts/{,*/}*.*',
+            'data/{,*/}*.*'
           ]
         }, {
           expand: true,

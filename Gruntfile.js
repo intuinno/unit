@@ -79,7 +79,7 @@ module.exports = function(grunt) {
       },
       pages: {
         options: {
-          remote: 'git@github.com:intuinno/unit.git',
+          remote: 'https://github.com/intuinno/unit',
           branch: 'gh-pages'
         }
       },

@@ -19,7 +19,7 @@ module.exports = function(grunt) {
     cdnify: 'grunt-google-cdn'
   });
 
-  grunt.loadNpmTasks('grunt-gh-pages');
+  // grunt.loadNpmTasks('grunt-gh-pages');
 
   // Configurable paths for the application
   var appConfig = {
@@ -36,13 +36,11 @@ module.exports = function(grunt) {
     // Watches files for changes and runs tasks based on the changed files
 
     'gh-pages': {
-    options: {
-      base: 'dist'
+      options: {
+        base: 'dist'
+      },
+      src: ['**']
     },
-    src: ['**']
-  },
-
-
     watch: {
       bower: {
         files: ['bower.json'],
@@ -77,28 +75,6 @@ module.exports = function(grunt) {
         ]
       }
     },
-
-    buildcontrol: {
-      options: {
-        dir: 'dist',
-        commit: true,
-        push: true,
-        message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
-      },
-      pages: {
-        options: {
-          remote: 'https://github.com/intuinno/unit',
-          branch: 'gh-pages'
-        }
-      },
-      local: {
-        options: {
-          remote: '../',
-          branch: 'build'
-        }
-      }
-    },
-
     // The actual grunt server settings
     connect: {
       options: {

@@ -2,4 +2,3 @@ node_modules
 .tmp
 bower_components
 test/bower_components
-dist

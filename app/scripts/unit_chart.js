@@ -2,6 +2,13 @@ exports.UnitChart = function(divId, spec) {
 
   d3.csv(spec.data, function(error, csv_data) {
 
+    try{
+
+    console.log(JSON.stringify(spec));
+
+  } catch(e) {
+    console.log(e);
+  }
     csv_data.forEach(function(d, i) {
       d.id = i;
     });
@@ -19,6 +26,8 @@ exports.UnitChart = function(divId, spec) {
 
     drawUnit(rootContainer, spec, layoutList, divId);
   });
+
+
 };
 
 function applyLayout(containerList, layout) {
@@ -951,6 +960,11 @@ function drawUnit(container, spec, layoutList, divId) {
       .enter().append('g')
       .attr('class', layout.name)
       .attr('transform', function(d) {
+
+        if (isNaN(d.visualspace.posX) || isNaN(d.visualspace.posY)) {
+          console.log('NaN happened');
+          console.log(spec);
+        }
         return 'translate(' + d.visualspace.posX + ', ' + d.visualspace.posY + ')';
       });
 

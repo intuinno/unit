@@ -1,16 +1,16 @@
 var UnitChart = require('./unit_chart').UnitChart;
 var enumerate = require('./unit_enumerate').enumerate;
 
-editor
-d3.json('./data/editor.json', function(error,data){
-  UnitChart('editorchart', data);
-});
+// //editor
+// d3.json('./data/editor.json', function(error,data){
+//   UnitChart('editorchart', data);
+// });
 
-//
-//Unit Column Chart
-d3.json('./data/unit_column_chart_shared.json', function(error,data){
-  UnitChart('unit_column_chart_shared', data);
-});
+// //
+// //Unit Column Chart
+// d3.json('./data/unit_column_chart_shared.json', function(error,data){
+//   UnitChart('unit_column_chart_shared', data);
+// });
 // d3.json('./data/unit_column_chart.json', function(error,data){
 //   UnitChart('unit_column_chart', data);
 // });

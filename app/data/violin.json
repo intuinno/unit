@@ -13,7 +13,7 @@
     "name": "layout1",
     "type": "gridxy",
     "subgroup": {
-      "type":"groupby",
+      "type": "groupby",
       "key": "pclass",
       "isShared": false
     },
@@ -44,13 +44,13 @@
     },
     "sort": {
       "key": "pclass",
-      "direction":"ascending"
+      "direction": "ascending"
     }
   }, {
     "name": "layout2",
     "type": "gridxy",
     "subgroup": {
-      "type":"bin",
+      "type": "bin",
       "key": "age",
       "numBin": 19,
       "isShared": true
@@ -81,8 +81,8 @@
       "opacity": 0.5
     },
     "sort": {
-      "key":"age",
-      "direction":"ascending"
+      "key": "age",
+      "direction": "ascending"
     }
   }, {
     "name": "layout3",
@@ -148,9 +148,9 @@
       "opacity": 0.5
     },
     "sort": {
-      "type":"categorical",
-      "key":"survived",
-      "direction":"ascending"
+      "type": "categorical",
+      "key": "survived",
+      "direction": "ascending"
     }
   }],
   "mark": {
@@ -158,7 +158,7 @@
     "color": {
       "key": "survived",
       "type": "categorical"
-      },
+    },
     "size": {
       "type": "max",
       "isShared": false

@@ -1,195 +1,101 @@
 <!doctype html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/jsoneditor/dist/jsoneditor.min.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="unitApp">
+    <!--[if lte IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
 
-<head>
-  <meta charset="utf-8">
-  <title>unit</title>
+    <!-- Add your site or application content here -->
+    <div class="header">
+      <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
 
-  <!-- build:css styles/vendor.css -->
-  <!-- bower:css -->
-  <link rel="stylesheet" href="/bower_components/jsoneditor/dist/jsoneditor.min.css" />
-  <!-- endbower -->
-  <!-- endbuild -->
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
 
-  <!-- build:css styles/main.css -->
-  <link rel="stylesheet" href="styles/main.css">
-  <!-- endbuild -->
+            <a class="navbar-brand" href="#/">unit</a>
+          </div>
 
-</head>
+          <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
-<body>
-  <h1> Enumeration </h1> Select variables you want to enumerate
-
-  <div id="control_enumeration">
-  </div>
-  <label for="nLayer">
-    Number of Layers = <span id="nLayer-value"></span>
-  </label>
-  <input type="number" min="1" max="5" step="1" value="1" id="nLayer">
-  <label><input type="checkbox" checked="true" id="enumerate_draw">Don't actually draw, just calculate </label>
-  <div id="update_enumeration">
-    <input id="updatebutton_enumeration" name="updateButton_enumeration" type="button" value="Update enumeration" />
-  </div>
-  <p>
-  Numer of enumeration: <div id="num_enumeration"></div>
-  <div id="unit_enumerate"></div>
-
-
-  <h1>
-    Edit json and press update button
-  </h1>
-  <div id="editorchart"></div>
-  <div id="update">
-    <input id="updatebutton" name="updateButton" type="button" value="Update" />
-  </div>
-  <div id="jsoneditor" style="width: 400px; height: 400px;"></div>
-
-
-  <h1>
-  Examples. Please refer the json file
-  </h1>
-
-
-
-  <h3>Unit Column Chart </h3> Layout1 class fillX</p>
-  Layout2 id packXY </p>
-
-  By setting the size.isShared for second pack layout, we can create absolute version and relative percentage version.
-  <a href="data/unit_column_chart_shared.json">JSON for Left </a>
-  <a href="data/unit_column_chart.json">JSON for Middle</a>
-  <a href="data/unit_column_chart_shared_mark.json">JSON for Right</a>
-
-  <div class="container">
-    <div id="unit_column_chart_shared" class="fixed">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#/">Home</a></li>
+              <li><a ng-href="#/example">Example</a></li>
+              <li><a ng-href="#/live">Live Editor</a></li>
+              <li><a ng-href="#/enum">Enumerator</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="unit_column_chart" class="fixed">
+
+    <div class="container">
+    <div ng-view=""></div>
     </div>
-    <div id="unit_column_chart_shared_mark" class="flex-item">
+
+    <div class="footer">
+      <div class="container">
+        <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
+      </div>
     </div>
-  </div>
-
-  </p>
-  And you can create horizontal unit column chart. In this case Layout1 is fillY and Layout2 is packxy ,direction=BTLR.
-  </p>
-  <a href="data/horizontal_unit_column.json">JSON for chart </a>
-
-  <div id="horizontal_unit_column"></div>
-
-  <h3>Hierarchical Sharing </h3> Layout1 class fillX</p>
-  Layout2 gender fillY</p>
-  Layout3 id packXY </p>
-  These sharing settings are hierarchical meaning that each level can have its own sharing configuration on/off and these affect to what extent the domain is shared.
-  </p>
-  <a href="data/titanic_spec_packxy_isolated.json">JSON for Top Left (Layout2: True, Layout3: True )</a>
-  </p>
-  <a href="data/titanic_spec4.json">JSON for Top Right (Layout2: True, Layout3: False )</a>
-  </p>
-  <a href="data/titanic_spec_packxy_hierarchy.json">JSON for Bottom Left (Layout2: False, Layout3: True)</a>
-  </p>
-  <a href="data/titanic_spec_packxy_mixed.json">JSON for Bottom Right (Layout2: False, Layout3: False)</a>
-  </p>
 
 
-  <div class="container">
-    <div id="packxy_isolated" class="fixed">
-    </div>
-    <div id="packxy2" class="flex-item">
-    </div>
-  </div>
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  <div class="container">
-    <div id="packxy_hierarchy" class="fixed">
-    </div>
-    <div id="packxy_mixed" class="flex-item">
-    </div>
-  </div>
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
 
-  <h3>Maxfill aspect_ratio </h3> Layout1 age PackXY</p>
-  Layout2 class fillX</p>
-  Layout3 packXY </p>
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/jsoneditor/dist/jsoneditor.min.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
 
-  The square aspect_ratio can lead to the empty space. To resolve this, 'maxfill' aspect ratio try to find the an optimal aspect ratio that is close to square while removing empty space.
-  </p>
-  <a href="data/square_aspect.json">JSON for Top (Layout3: aspect_ratio:square)</a>
-  </p>
-  <a href="data/maxfill_aspect.json">JSON for middle (Layout3: aspect_ratio:maxfill )</a>
-  </p>
-  <a href="data/unit_small_multiple.json">JSON for Bottom (Layout3: aspect_ratio:maxfill isShared is true for Layout2 and Layout3)</a>
-  </p>
-
-  <div>
-    <div id="square_aspect">
-    </div>
-    <div id="maxfill_aspect">
-    </div>
-    <div id="unit_small_multiple">
-    </div>
-  </div>
-
-  <h3>Size by function </h3> Layout1 class fillX</p>
-  Layout2 fillY </p>
-
-  "size": { "type": ""sum", "key": "fare"", "isShared": true },
-  </p>
-
-  Size can be function of the contents. In top left, size is uniform for layout2. In top right, size is a function of sum of fares. In both, case size is not shared
-  </p> These setting can be combined with "isShared" flag. In bottom left, size is uniform and shared, and in bottom right, size is function of sum of fares and is shared. You can use the following syntax. Here the type can be sum, count, or uniform.
-  If it is sum, it can have additional "key" parameter which will determine the variables for sum.
-  </p>
-  "size": { "type": ""sum", "key": "fare", "isShared": true },
-  </p>
-
-  <a href="data/size_uniform_notShared.json">JSON for Top Left (Layout2: {"size": {"type":"uniform", "isShared":false}} )</a>
-  </p>
-  <a href="data/size_sum_notShared.json">JSON for Top Right (Layout2: {"size": {"type":"sum", "key":"fare", "isShared":false}} )</a>
-  </p>
-  <a href="data/size_uniform_shared.json">JSON for Bottom Left (Layout2: {"size": {"type":"uniform", "isShared":true}} )</a>
-  </p>
-  <a href="data/size_sum_shared.json">JSON for Bottom Right (Layout2: {"size": {"type":"sum", "key":"fare", "isShared":true}} )</a>
-  </p>
-
-
-  <div class="container">
-    <div id="size_uniform_notshared" class="fixed">
-    </div>
-    <div id="size_sum_notshared" class="flex-item">
-    </div>
-  </div>
-
-  <div class="container">
-    <div id="size_uniform_shared" class="fixed">
-    </div>
-    <div id="size_sum_shared" class="flex-item">
-    </div>
-  </div>
-
-  <h3>Violin Plot </h3> Layout1 class fillX</p>
-  Layout2 fillY size uniform, isShared:true </p>
-  Layout3 fillX size count, isShared:true </p>
-  Layout4 maxfil size uniform, isShared:false </p>
-
-  </p>
-  <div id="violin"></div>
-
-  <h3>Mosaic Plot </h3> Layout1 class fillY, size:count</p>
-  Layout2 survived fillX size:count, isShared:false </p>
-  Layout3 sex fillY size count, isShared:false </p>
-  Layout4 maxfill size uniform, isShared:false </p>
-
-  </p>
-  <img src="images/vcd-mosaic.png">
-  <div id="mosaic"></div>
-
-  <!-- build:js scripts/vendor.js -->
-  <!-- bower:js -->
-  <script src="/bower_components/d3/d3.js"></script>
-  <script src="/bower_components/jsoneditor/dist/jsoneditor.min.js"></script>
-  <!-- endbower -->
-  <!-- endbuild -->
-
-  <!-- build:js scripts/main.js -->
-  <script src="scripts/bundle.js"></script>
-  <!-- endbuild -->
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/about.js"></script>
+        <script src="scripts/controllers/example.js"></script>
+        <script src="scripts/services/unitchart.js"></script>
+        <script src="scripts/controllers/live.js"></script>
+        <script src="scripts/controllers/enum.js"></script>
+        <!-- endbuild -->
 </body>
-
 </html>

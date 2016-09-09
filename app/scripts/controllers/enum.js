@@ -74,6 +74,13 @@ angular.module('unitApp')
             specs = enumeratePolicyForDoubleLayers(firstLayers, flattenLayers, markPolicies);
             break;
 
+          default:
+            var firstLayers = getFirstLayers(selectedInputs);
+            var middleLayers = getMiddleLayers(selectedInputs, numLayer);
+            flattenLayers = getFlattenLayers(selectedInputs);
+            markPolicies = getMarkPolicies(selectedInputs);
+            specs = enumeratePolicyForGeneralLayers(firstLayers,middleLayers, flattenLayers, markPolicies);
+
         }
         console.log("Number of Enumerations:", specs.length);
 
@@ -88,6 +95,7 @@ angular.module('unitApp')
       });
 
     };
+
 
     function enumeratePolicyForDoubleLayers(firstLayers, flattenLayers, markPolicies) {
       var specs = [];
@@ -112,6 +120,42 @@ angular.module('unitApp')
             aSpec.layouts = [newFirstLayer, newFlattenLayer];
             aSpec.mark = aMarkPolicy;
             specs.push(aSpec);
+          });
+        });
+      });
+
+      return specs;
+    }
+
+    function enumeratePolicyForGeneralLayers(firstLayers, middleLayers, flattenLayers, markPolicies, numLayer) {
+      var specs = [];
+      firstLayers.forEach(function(aFirstLayer) {
+        middleLayers.forEach(function(aMiddleLayer) {
+          flattenLayers.forEach(function(aFlattenLayer) {
+            markPolicies.forEach(function(aMarkPolicy) {
+              var newFirstLayer = JSON.parse(JSON.stringify(aFirstLayer));
+              var newFlattenLayer = JSON.parse(JSON.stringify(aFlattenLayer));
+              var newMiddleLayer = JSON.parse(JSON.stringify(aMiddleLayer));
+              var aSpec = {
+                "title": "Titanic",
+                "data": "data/titanic3.csv",
+                "width": 1000,
+                "height": 320,
+                "padding": {
+                  "top": 5,
+                  "left": 5,
+                  "bottom": 5,
+                  "right": 5
+                },
+                "layouts": []
+              };
+              aSpec.layouts = [newFirstLayer];
+              aSpec.layouts = aSpec.layouts.concat( newMiddleLayer);
+              aSpec.layouts = aSpec.layouts.push( newMiddleLayer);
+
+              aSpec.mark = aMarkPolicy;
+              specs.push(aSpec);
+            });
           });
         });
       });
@@ -312,6 +356,128 @@ angular.module('unitApp')
       });
 
       return layers;
+    }
+
+    function getMiddleLayers(selectedInputs, numLayer) {
+
+      var enum_aspect_ratio = ['fillX', 'fillY', 'maxfill', 'square', 'parent'];
+      var enum_groupby_key = [{
+        'type': 'passthrough'
+      }];
+
+      enum_groupby_key = enum_groupby_key.concat(selectedInputs.map(function(d) {
+        return {
+          'type': 'groupby',
+          'key': d
+        }
+      }));
+
+      selectedInputs;
+      var enum_groupby_isShared = [true]
+      var enum_size_type = [{
+        'type': 'uniform'
+      }, {
+        'type': 'count'
+      }];
+
+      enum_size_type = enum_size_type.concat(selectedInputs.map(function(d) {
+        return {
+          'type': 'sum',
+          'key': d
+        };
+      }));
+
+      var enum_size_sum_key = selectedInputs;
+      var enum_size_isShared = [true];
+      var enum_direction = ['LRTB'];
+      var enum_align = ['LB'];
+      var enum_sort_key = selectedInputs;
+
+      var layers = [];
+
+      enum_aspect_ratio.forEach(function(a_aspect_ratio, i) {
+        enum_size_type.forEach(function(a_size_type) {
+          enum_size_isShared.forEach(function(a_size_isShared) {
+            enum_direction.forEach(function(a_direction) {
+              enum_align.forEach(function(a_align) {
+                enum_sort_key.forEach(function(a_sort_key) {
+                  enum_groupby_key.forEach(function(a_groupby_key) {
+                    enum_groupby_isShared.forEach(function(a_groupby_isShared) {
+                      var aLayer = {
+                        "name": "firstlayer",
+                        "type": "gridxy",
+                        "subgroup": {
+                          "type": a_groupby_key.type,
+                          "key": (a_groupby_key.type === 'groupby') ? a_groupby_key.key : '',
+                          "isShared": a_groupby_isShared
+                        },
+                        "aspect_ratio": a_aspect_ratio,
+                        "size": {
+                          "type": a_size_type.type,
+                          "isShared": a_size_isShared,
+                          "key": (a_size_type.type === 'sum') ? a_size_type.key : ''
+                        },
+                        "direction": a_direction,
+                        "align": a_align,
+                        "margin": {
+                          "top": 0,
+                          "left": 0,
+                          "bottom": 0,
+                          "right": 0
+                        },
+                        "padding": {
+                          "top": 0,
+                          "left": 0,
+                          "bottom": 0,
+                          "right": 0
+                        },
+                        "box": {
+                          "fill": "yellow",
+                          "stroke": "red",
+                          "stroke-width": 0,
+                          "opacity": 0.1
+                        },
+                        "sort": {
+                          "type": isCategorical(a_sort_key) ? "categorical" : "numerical",
+                          "key": a_sort_key
+                        }
+                      };
+
+                      layers.push(aLayer);
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+
+      layers = getCombi(layers, numLayer -2);
+      return layers;
+    }
+
+    function getCombi(layers, depth) {
+
+      if (depth == 1){
+        return layers;
+      } else {
+        var newLayers = getCombi(layers, depth-1);
+        var resultLayers = []
+
+        layers.forEach(function(aLayer) {
+          newLayers.forEach(function(aNewLayer) {
+            aCopyLayer = JSON.parse(JSON.stringify(aLayer));
+            var newArr = [aCopyLayer];
+            aNewCopyLayer = JSON.parse(JSON.stringify(aNewLayer));
+            newArr = newArr.concat(aNewCopyLayer);
+
+            resultLayers.push(newArr);
+          });
+        });
+
+        return resultLayers;
+      }
     }
 
     function isCategorical(key) {

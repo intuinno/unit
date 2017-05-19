@@ -25,10 +25,10 @@
     "direction": "LRBT",
     "align": "LB",
     "margin": {
-      "top": 0,
-      "left": 0,
-      "bottom": 0,
-      "right": 0
+      "top": 5,
+      "left": 5,
+      "bottom": 5,
+      "right": 5
     },
     "padding": {
       "top": 0,
@@ -42,7 +42,7 @@
     "subgroup": {
       "type": "flatten"
     },
-    "aspect_ratio": "square",
+    "aspect_ratio": "maxfill",
     "size": {
       "type": "uniform",
       "isShared": true
@@ -66,7 +66,7 @@
     }
   }],
   "mark": {
-    "shape": "rect",
+    "shape": "circle",
     "color": {
       "key": "survived",
       "type": "categorical"

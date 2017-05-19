@@ -37,9 +37,9 @@
       "right": 5
     },
     "box": {
-      "fill": "blue",
+      "fill": "white",
       "stroke": "black",
-      "stroke-width": 1,
+      "stroke-width": 0,
       "opacity": 0.3
     },
     "sort": {
@@ -75,9 +75,9 @@
       "right": 0
     },
     "box": {
-      "fill": "green",
-      "stroke": "red",
-      "stroke-width": 1,
+      "fill": "white",
+      "stroke": "black",
+      "stroke-width": 0.5,
       "opacity": 0.5
     },
     "sort": {
@@ -111,9 +111,9 @@
       "right": 0
     },
     "box": {
-      "fill": "yellow",
+      "fill": "white",
       "stroke": "blue",
-      "stroke-width": 1,
+      "stroke-width": 0,
       "opacity": 0.5
     }
   }, {

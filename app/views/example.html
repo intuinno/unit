@@ -1,6 +1,6 @@
 
-  <h3>Unit Column Chart </h3> Layout1 class fillX</p>
-  Layout2 id packXY </p>
+  <h3>Unit Column Chart </h3> Layout1 class fillX</br>
+  Layout2 id packXY </br>
 
   By setting the size.isShared for second pack layout, we can create absolute version and relative percentage version.
   <a href="data/unit_column_chart_shared.json">JSON for Left </a>
@@ -16,26 +16,26 @@
     </div>
   </div>
 
-  </p>
+  </br>
   And you can create horizontal unit column chart. In this case Layout1 is fillY and Layout2 is packxy ,direction=BTLR.
-  </p>
+  </br>
   <a href="data/horizontal_unit_column.json">JSON for chart </a>
 
   <div id="horizontal_unit_column"></div>
 
-  <h3>Hierarchical Sharing </h3> Layout1 class fillX</p>
-  Layout2 gender fillY</p>
-  Layout3 id packXY </p>
+  <h3>Hierarchical Sharing </h3> Layout1 class fillX</br>
+  Layout2 gender fillY</br>
+  Layout3 id packXY </br>
   These sharing settings are hierarchical meaning that each level can have its own sharing configuration on/off and these affect to what extent the domain is shared.
-  </p>
+  </br>
   <a href="data/titanic_spec_packxy_isolated.json">JSON for Top Left (Layout2: True, Layout3: True )</a>
-  </p>
+  </br>
   <a href="data/titanic_spec4.json">JSON for Top Right (Layout2: True, Layout3: False )</a>
-  </p>
+  </br>
   <a href="data/titanic_spec_packxy_hierarchy.json">JSON for Bottom Left (Layout2: False, Layout3: True)</a>
-  </p>
+  </br>
   <a href="data/titanic_spec_packxy_mixed.json">JSON for Bottom Right (Layout2: False, Layout3: False)</a>
-  </p>
+  </br>
 
 
   <div class="container">
@@ -52,18 +52,18 @@
     </div>
   </div>
 
-  <h3>Maxfill aspect_ratio </h3> Layout1 age PackXY</p>
-  Layout2 class fillX</p>
-  Layout3 packXY </p>
+  <h3>Maxfill aspect_ratio </h3> Layout1 age PackXY</br>
+  Layout2 class fillX</br>
+  Layout3 packXY </br>
 
   The square aspect_ratio can lead to the empty space. To resolve this, 'maxfill' aspect ratio try to find the an optimal aspect ratio that is close to square while removing empty space.
-  </p>
+  </br>
   <a href="data/square_aspect.json">JSON for Top (Layout3: aspect_ratio:square)</a>
-  </p>
+  </br>
   <a href="data/maxfill_aspect.json">JSON for middle (Layout3: aspect_ratio:maxfill )</a>
-  </p>
+  </br>
   <a href="data/unit_small_multiple.json">JSON for Bottom (Layout3: aspect_ratio:maxfill isShared is true for Layout2 and Layout3)</a>
-  </p>
+  </br>
 
   <div>
     <div id="square_aspect">
@@ -74,27 +74,27 @@
     </div>
   </div>
 
-  <h3>Size by function </h3> Layout1 class fillX</p>
-  Layout2 fillY </p>
+  <h3>Size by function </h3> Layout1 class fillX</br>
+  Layout2 fillY </br>
 
   "size": { "type": ""sum", "key": "fare"", "isShared": true },
-  </p>
+  </br>
 
   Size can be function of the contents. In top left, size is uniform for layout2. In top right, size is a function of sum of fares. In both, case size is not shared
-  </p> These setting can be combined with "isShared" flag. In bottom left, size is uniform and shared, and in bottom right, size is function of sum of fares and is shared. You can use the following syntax. Here the type can be sum, count, or uniform.
+  </br> These setting can be combined with "isShared" flag. In bottom left, size is uniform and shared, and in bottom right, size is function of sum of fares and is shared. You can use the following syntax. Here the type can be sum, count, or uniform.
   If it is sum, it can have additional "key" parameter which will determine the variables for sum.
-  </p>
+  </br>
   "size": { "type": ""sum", "key": "fare", "isShared": true },
-  </p>
+  </br>
 
   <a href="data/size_uniform_notShared.json">JSON for Top Left (Layout2: {"size": {"type":"uniform", "isShared":false}} )</a>
-  </p>
+  </br>
   <a href="data/size_sum_notShared.json">JSON for Top Right (Layout2: {"size": {"type":"sum", "key":"fare", "isShared":false}} )</a>
-  </p>
+  </br>
   <a href="data/size_uniform_shared.json">JSON for Bottom Left (Layout2: {"size": {"type":"uniform", "isShared":true}} )</a>
-  </p>
+  </br>
   <a href="data/size_sum_shared.json">JSON for Bottom Right (Layout2: {"size": {"type":"sum", "key":"fare", "isShared":true}} )</a>
-  </p>
+  </br>
 
 
   <div class="container">
@@ -111,31 +111,34 @@
     </div>
   </div>
 
-  <h3>Violin Plot </h3> Layout1 class fillX</p>
-  Layout2 fillY size uniform, isShared:true </p>
-  Layout3 fillX size count, isShared:true </p>
-  Layout4 maxfil size uniform, isShared:false </p>
+  <h3>Violin Plot </h3> 
+  <p></br> Layout1 class fillX</br>
+  <p> Layout2 fillY size uniform, isShared:true </br>
+  <p> Layout3 fillX size count, isShared:true </br>
+  <p> Layout4 maxfil size uniform, isShared:false </br>
 
-  <a href="data/violin.json">JSON for Unit Violin chart</a>
-  </p>
+  <p> <a href="data/violin.json">JSON for Unit Violin chart</a>
+  </br>
   
   <div id="violin"></div>
 
   <h3>Unit Fluctuation Chart </h3> 
-  Layout1 gender fillY</p>
-  Layout2 class fillX size uniform, isShared:true </p>
-  Layout3 passthrough size count, isShared:true </p>
-  Layout4 maxfil size uniform, isShared:false </p>
+  <p>  Layout1 gender fillY</br>
+  <p>  Layout2 class fillX size uniform, isShared:true </br>
+  <p>  Layout3 passthrough size count, isShared:true </br>
+  <p>  Layout4 maxfil size uniform, isShared:false </br>
 
   <a href="data/fluctuation.json">JSON for Unit Fluctuation chart</a>
-  </p>
+  </br>
   <div id="fluctuation"></div>
 
-  <h3>Mosaic Plot </h3> Layout1 class fillY, size:count</p>
-  Layout2 survived fillX size:count, isShared:false </p>
-  Layout3 sex fillY size count, isShared:false </p>
-  Layout4 maxfill size uniform, isShared:false </p>
+  <h3>Mosaic Plot </h3> 
+  <p> Layout1 class fillY, size:count</br>
+  <p> Layout2 survived fillX size:count, isShared:false </br>
+  <p> Layout3 sex fillY size count, isShared:false </br>
+  <p> Layout4 maxfill size uniform, isShared:false </br>
 
-  </p>
+  <a href="data/mosaic.json">JSON for Mosaic plot</a>
+  </br>
   <img src="images/vcd-mosaic.png">
   <div id="mosaic"></div>

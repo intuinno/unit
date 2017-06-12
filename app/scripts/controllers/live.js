@@ -13,15 +13,15 @@ angular.module('unitApp')
 
     var UnitChart = unit.UnitChart;
     
-    d3.json('./data/editor.json', function(error, data) {
+    d3.json('./data/fluctuation.json', function(error, data) {
       UnitChart('editorchart', data);
-    });
+    })
 
     var container = document.getElementById('jsoneditor');
     var options = {};
     var editor = new JSONEditor(container, options);
 
-    d3.json('./data/editor.json', function(error, json) {
+    d3.json('./data/fluctuation.json', function(error, json) {
       editor.set(json);
     });
 

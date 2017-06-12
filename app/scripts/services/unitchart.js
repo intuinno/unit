@@ -266,6 +266,7 @@ angular.module('unitApp')
 
           c.visualspace.height = parentVisualSpace.height - parentVisualSpace.padding.top - parentVisualSpace.padding.bottom - layout.margin.top - layout.margin.bottom;
 
+          
           c.visualspace.posY = parentVisualSpace.padding.top + layout.margin.top;
 
           c.visualspace.padding = layout.padding;
@@ -455,14 +456,30 @@ angular.module('unitApp')
           aspect_ratio = (parentContainer.visualspace.width / parentContainer.visualspace.height);
           break;
       }
-
+      var edgeInfo = calcEdgeInfo(parentContainer, childContainers, layout, aspect_ratio)
+      applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo);
+    }
+    
+    function calcEdgeInfo(parentContainer, childContainers, layout, aspect_ratio){ 
       if (isVerticalDirection(layout.direction)) {
         var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.width, parentContainer.visualspace.height, childContainers.length, aspect_ratio);
       } else {
         var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.height, parentContainer.visualspace.width, childContainers.length, 1 / aspect_ratio);
       }
+      return edgeInfo;
+    }
 
-      applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo);
+    function calcPackGridxyVisualSpaceWithUnitLength(parentContainer, childContainers, layout, unitLength)  {
+      switch(layout.aspect_ratio) {
+        case 'square':
+          childContainers.forEach(function(c, i, all) {
+            c.visualspace.width = Math.sqrt( unitLength * getValue(c, layout) ); 
+            c.visualspace.height = Math.sqrt( unitLength * getValue(c, layout) ); 
+            c.visualspace.posX = parentContainer.visualspace.padding.left + layout.margin.left + 0.5*( parentContainer.visualspace.width - c.visualspace.width  - parentContainer.visualspace.padding.left - parentContainer.visualspace.padding.right);
+            c.visualspace.posY = parentContainer.visualspace.padding.top + layout.margin.top + 0.5*(parentContainer.visualspace.height - c.visualspace.height - parentContainer.visualspace.padding.top - parentContainer.visualspace.padding.right)
+          });
+          
+      }
     }
 
     function applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo) {
@@ -748,7 +765,17 @@ angular.module('unitApp')
       var parentContainers = getParents(layout.sizeSharingGroup);
 
       parentContainers.forEach(function(d) {
-        calcFillGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
+        switch (layout.aspect_ratio) {
+          case 'fillX':
+          case 'fillY':
+            calcFillGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
+            break;
+          case 'square':
+          case 'parent':
+          case 'custom':
+          case 'maxfill':
+            calcPackGridxyVisualSpaceWithUnitLength(d, d.contents, layout, minUnit);
+        }
       });
     }
 
@@ -760,24 +787,35 @@ angular.module('unitApp')
         var unit = getUnit(availableSpace, d.contents, layout);
         return unit;
       });
-
       return minUnit;
     }
 
-
-
     function getAvailableSpace(container, layout) {
-      if (layout.aspect_ratio === 'fillX') {
-        return container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
-      } else if (layout.aspect_ratio === 'fillY') {
-        return container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
+      switch(layout.aspect_ratio) {
+        case 'fillX':
+          return container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
+        case 'fillY':
+          return container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
+        case 'maxfill':
+        case 'parent':
+          var width =  container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
+          var height = container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
+          return width * height;
+        case 'square':
+          var width =  container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
+          var height = container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
+          return Math.pow(d3.min([ width, height ]),2);
       }
     }
 
     function makeSharedSizePack(layout) {
-      var minSize = getMinAmongContainers(layout);
-
-      applySharedSizeOnContainers(minSize, layout);
+      if (layout.size.type === 'uniform'){
+        var minSize = getMinAmongContainers(layout);
+        applySharedSizeOnContainers(minSize, layout);
+      } else {
+        var minUnit = getMinUnitAmongContainers(layout);
+        applySharedUnitOnContainers(minUnit, layout);
+      }
     }
 
     function makeContainers(container, layout) {

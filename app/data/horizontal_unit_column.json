@@ -68,9 +68,9 @@
       "right": 0
     },
     "box": {
-      "fill": "green",
+      "fill": "white",
       "stroke": "red",
-      "stroke-width": 1,
+      "stroke-width": 0,
       "opacity": 0.5
     },
     "sort":{

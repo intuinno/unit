@@ -71,6 +71,11 @@ angular.module('unitApp')
       UnitChart('violin', data);
     });
 
+    //Fluctuation 
+    d3.json('./data/fluctuation.json', function(error,data){
+      UnitChart('fluctuation', data);
+    });
+    
     //Mosaic
     d3.json('./data/mosaic.json', function(error,data){
       UnitChart('mosaic', data);

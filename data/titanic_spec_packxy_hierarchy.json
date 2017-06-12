@@ -14,10 +14,10 @@
     "type": "gridxy",
     "subgroup": {
       "type": "groupby",
-      "key": "Class",
+      "key": "Sex",
       "isShared": false
     },
-    "aspect_ratio": "fillX",
+    "aspect_ratio": "fillY",
     "size": {
       "type": "uniform",
       "isShared": false
@@ -25,26 +25,26 @@
     "direction": "LRBT",
     "align": "LB",
     "margin": {
-      "top": 5,
-      "left": 5,
-      "bottom": 5,
-      "right": 5
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0
     },
     "padding": {
-      "top": 5,
-      "left": 5,
-      "bottom": 5,
-      "right": 5
+      "top": 0,
+      "left": 0,
+      "bottom": 0,
+      "right": 0
     }
   }, {
     "name": "layout2",
     "type": "gridxy",
     "subgroup": {
       "type": "groupby",
-      "key": "Sex",
+      "key": "Class",
       "isShared": true
     },
-    "aspect_ratio": "fillY",
+    "aspect_ratio": "fillX",
     "size": {
       "type": "uniform",
       "isShared": false
@@ -69,7 +69,7 @@
     "subgroup": {
       "type": "flatten"
     },
-    "aspect_ratio": "square",
+    "aspect_ratio": "maxfill",
     "size": {
       "type": "uniform",
       "isShared": true

@@ -28,7 +28,7 @@
       "type": "gridxy",
       "subgroup": {
         "type":"flatten"      },
-      "aspect_ratio":"square",
+      "aspect_ratio":"maxfill",
       "size": {
         "type":"uniform",
         "isShared": false

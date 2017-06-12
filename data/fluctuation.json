@@ -1,8 +1,8 @@
 {
   "title": "Titanic",
   "data": "data/titanic.csv",
-  "width": 320,
-  "height": 240,
+  "width": 800,
+  "height": 600,
   "padding": {
     "top": 5,
     "left": 5,
@@ -65,6 +65,38 @@
     }
   }, {
     "name": "layout3",
+    "type": "gridxy",
+    "subgroup": {
+      "type": "passthrough",
+      "isShared": true
+    },
+    "aspect_ratio": "square",
+    "size": {
+      "type": "count",
+      "isShared": true
+    },
+    "direction": "LRBT",
+    "align": "center",
+    "margin": {
+      "top": 1,
+      "left": 1,
+      "bottom": 1,
+      "right": 1
+    },
+    "padding": {
+      "top": 2,
+      "left": 2,
+      "bottom": 2,
+      "right": 2
+    },
+    "box": {
+      "fill": "none",
+      "stroke": "black",
+      "stroke-width": 0,
+      "opacity": 0.3
+    }
+  },{
+    "name": "layout4",
     "type": "gridxy",
     "subgroup": {
       "type": "flatten"

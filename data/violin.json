@@ -156,7 +156,7 @@
   "mark": {
     "shape": "circle",
     "color": {
-      "key": "survived",
+      "key": "survived_text",
       "type": "categorical"
     },
     "size": {

@@ -13,7 +13,7 @@ angular.module('unitApp')
 
     var UnitChart = unit.UnitChart;
     
-    d3.json('./data/fluctuation.json', function(error, data) {
+    d3.json('./data/violin.json', function(error, data) {
       UnitChart('editorchart', data);
     })
 

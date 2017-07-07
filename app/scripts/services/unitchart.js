@@ -1119,6 +1119,10 @@ angular.module('unitApp')
       } else {
         console.log('TODO');
       }
+      if (markPolicy.color.key === 'survived_text') {
+        color("YES");
+        color("NO");
+      }
       marks.style('fill', function(d) {
         return color(d.contents[0][markPolicy.color.key]);
       });

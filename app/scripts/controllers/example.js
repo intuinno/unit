@@ -70,6 +70,11 @@ angular.module('unitApp')
     d3.json('./data/violin.json', function(error,data){
       UnitChart('violin', data);
     });
+    
+    //Squarified
+    d3.json('./data/squarified.json', function(error,data){
+      UnitChart('squarified', data);
+    });
 
     //Fluctuation 
     d3.json('./data/fluctuation.json', function(error,data){

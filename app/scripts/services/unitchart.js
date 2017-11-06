@@ -53,6 +53,11 @@ angular.module('unitApp')
       containerList.forEach(function(container, i, all) {
 
         newSizeSharingAncestor = getSharingAncestorContainer(container, layout, 'size');
+        if (newSizeSharingAncestor !== oldSizeSharingAncestor) {
+          applySharedSize(layout);
+          oldSizeSharingAncestor = newSizeSharingAncestor;
+        }
+
         var newContainers = makeContainers(container, layout);
 
         if (newContainers.length > 0) {
@@ -62,10 +67,6 @@ angular.module('unitApp')
         handleSharedSize(container, layout);
         childContainers = childContainers.concat(newContainers);
 
-        if (newSizeSharingAncestor !== oldSizeSharingAncestor) {
-          applySharedSize(layout);
-          oldSizeSharingAncestor = newSizeSharingAncestor;
-        }
       });
 
       applySharedSize(layout);
@@ -196,6 +197,40 @@ angular.module('unitApp')
     }
 
     function calcPackGridxyMaxFillVisualSpace(parentContainer, childContainers, layout) {
+      if (layout.size.type === 'uniform'){
+        calcPackGridxyMaxFillVisualSpaceUniform(parentContainer, childContainers, layout);
+      } else {
+        calcPackGridxyMaxFillVisualSpaceFunction(parentContainer, childContainers, layout);
+      }
+    }
+
+    function calcPackGridxyMaxFillVisualSpaceFunction(parentContainer, childContainers, layout) {
+
+      childContainers = childContainers.filter(function(d) {
+        return Number(d['contents'][0][layout.size.key] > 0 );
+      });
+
+      childContainers.sort(function(c,d){ 
+        return d['contents'][0][layout.size.key] - c['contents'][0][layout.size.key];
+      });
+
+      var data = childContainers.map(function(d) {
+        return Number( d['contents'][0][layout.size.key] );
+      });
+
+      var coord = Treemap.generate( data, parentContainer.visualspace.width, parentContainer.visualspace.height );
+
+      childContainers.forEach(function(c, i, all) {
+        var rect = coord[i];
+        c.visualspace.width = rect[2] - rect[0];
+        c.visualspace.height = rect[3] - rect[1];
+        c.visualspace.posX = rect[0];
+        c.visualspace.posY = rect[1]
+        c.visualspace.padding = layout.padding;
+      })
+      
+    }
+    function calcPackGridxyMaxFillVisualSpaceUniform(parentContainer, childContainers, layout) {
 
       var edgeInfo = buildEdgeInfoForMaxFill(parentContainer, childContainers, layout);
 

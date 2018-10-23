@@ -407,6 +407,12 @@ module.exports = function(grunt) {
           dest: '<%= yeoman.dist %>'
         },{
           expand: true,
+          cwd: 'bower_components/jsoneditor/dist',
+          src: 'img/*',
+          dest: '<%= yeoman.dist %>/styles'
+        },
+        {
+          expand: true,
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/images',
           src: ['generated/*']

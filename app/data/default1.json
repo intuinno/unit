@@ -1,0 +1,10 @@
+{
+    "data": "data/titanic3.csv",
+    "layouts": [
+      {
+        "subgroup": {
+          "type": "flatten"
+        }
+      }
+    ]
+}

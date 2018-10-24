@@ -13,15 +13,18 @@ angular.module('unitApp')
 
     var UnitChart = unit.UnitChart;
     
-    d3.json('./data/squarified.json',function(error, data) {
+    d3.json('./data/default5.json',function(error, data) {
       UnitChart('editorchart', data);
     })
 
     var container = document.getElementById('jsoneditor');
-    var options = {};
+    var options = {
+      "mode": "code",
+      "indentation": 2
+    };
     var editor = new JSONEditor(container, options);
 
-    d3.json('./data/squarified.json', function(error, json) {
+    d3.json('./data/default5.json', function(error, json) {
       editor.set(json);
     });
 

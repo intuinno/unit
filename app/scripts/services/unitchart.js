@@ -8,13 +8,136 @@
  * Factory in the unitApp.
  */
 angular.module('unitApp')
-  .factory('unit', function() {
+  .factory('unit', function () {
     // Service logic
     // ...
 
-    var UnitChart = function(divId, spec) {
+    var UnitChart = function (divId, spec) {
 
-      d3.csv(spec.data, function(error, csv_data) {
+      function applyDefaultObj(specObj, defaultObj) {
+        for (var prop in defaultObj) {
+          specObj[prop] = specObj.hasOwnProperty(prop)? specObj[prop]: defaultObj[prop]; 
+          if(typeof specObj[prop] === "object"){
+            applyDefaultObj(specObj[prop], defaultObj[prop]);
+          }
+        }
+      }
+
+      function applyDefault(spec) {
+
+        var defaultMark = {
+          "shape": "circle",
+          "color": {
+            "type": "uniform"
+          },
+          "size": {
+            "type": "max",
+            "isShared": false
+          },
+          "isColorScaleShared": true
+        };
+
+        var defaultPadding = {
+          "top": 0,
+          "left": 0,
+          "bottom": 0,
+          "right": 0
+        };
+
+        var defaultWidth = 720;
+        var defaultHeight = 480;
+
+        var defaultLayout = {
+          "type": "gridxy",
+          "aspect_ratio": "maxfill", 
+          "size": {
+            "type": "uniform",
+            "isShared": true
+          }, 
+          "direction": "LRBT",
+          "align": "LB",
+          "margin": {
+            "top": 0,
+            "left": 0,
+            "bottom": 0,
+            "right": 0
+          },
+          "padding": {
+            "top": 0,
+            "left": 0,
+            "bottom": 0,
+            "right": 0
+          },
+          "box": {
+            "fill": "white",
+            "stroke": "gray",
+            "stroke-width": 1,
+            "opacity": 0.5
+          },
+          "sort": {
+            "type": "categorical",
+            "key": "survived",
+            "direction": "ascending"
+          }
+        };
+
+        spec.mark = spec.mark? spec.mark: defaultMark;
+
+        applyDefaultObj(spec.mark, defaultMark);
+
+        spec.padding = spec.padding? spec.padding: defaultPadding;
+        spec.width = spec.width? spec.width: defaultWidth;
+        spec.height = spec.height? spec.height: defaultHeight;
+
+
+
+        for (var i=0; i < spec.layouts.length; i++) {
+          var layout = spec.layouts[i];
+          
+          applyDefaultObj(layout, defaultLayout);
+
+          if (layout.subgroup.type === "flatten") {
+            layout.margin =  {
+              "top": 0,
+              "left": 0,
+              "bottom": 0,
+              "right": 0
+            };
+            layout.box = {
+              
+                "fill": "white",
+                "stroke": "gray",
+                "stroke-width": 0,
+                "opacity": 0.5
+            
+            }
+          }
+        }
+
+        if (spec.layouts.length > 1) {
+          var firstLayout = spec.layouts[0];
+
+          firstLayout.margin =  {
+            "top": 5,
+            "left": 5,
+            "bottom": 5,
+            "right": 5
+          };
+
+          firstLayout.padding =  {
+            "top": 5,
+            "left": 5,
+            "bottom": 5,
+            "right": 5
+          };
+
+        }
+
+      }
+
+      applyDefault(spec);
+
+      d3.csv(spec.data, function (error, csv_data) {
 
         try {
 
@@ -23,7 +146,7 @@ angular.module('unitApp')
         } catch (e) {
           console.log(e);
         }
-        csv_data.forEach(function(d, i) {
+        csv_data.forEach(function (d, i) {
           d.id = i;
         });
 
@@ -50,7 +173,7 @@ angular.module('unitApp')
       var newSizeSharingAncestor;
       var oldSizeSharingAncestor = getSharingAncestorContainer(containerList[0], layout, 'size');
 
-      containerList.forEach(function(container, i, all) {
+      containerList.forEach(function (container, i, all) {
 
         newSizeSharingAncestor = getSharingAncestorContainer(container, layout, 'size');
         if (newSizeSharingAncestor !== oldSizeSharingAncestor) {
@@ -127,7 +250,7 @@ angular.module('unitApp')
 
       layoutList.head = layouts[0];
 
-      layouts.forEach(function(layout, i, all) {
+      layouts.forEach(function (layout, i, all) {
 
         if (i > 0) {
           layout.parent = all[i - 1];
@@ -145,11 +268,11 @@ angular.module('unitApp')
 
     function getKeys(data, groupby) {
       var myNest = d3.nest()
-        .key(function(d) {
+        .key(function (d) {
           return d[groupby]
         })
         .entries(data);
-      return myNest.map(function(d) {
+      return myNest.map(function (d) {
         return d.key;
       });
     }
@@ -157,7 +280,7 @@ angular.module('unitApp')
     function emptyContainersFromKeys(data, groupby) {
 
       return getKeys(data, groupby)
-        .map(function(key) {
+        .map(function (key) {
           return {
             'contents': [],
             'label': key,
@@ -197,7 +320,7 @@ angular.module('unitApp')
     }
 
     function calcPackGridxyMaxFillVisualSpace(parentContainer, childContainers, layout) {
-      if (layout.size.type === 'uniform'){
+      if (layout.size.type === 'uniform') {
         calcPackGridxyMaxFillVisualSpaceUniform(parentContainer, childContainers, layout);
       } else {
         calcPackGridxyMaxFillVisualSpaceFunction(parentContainer, childContainers, layout);
@@ -206,21 +329,21 @@ angular.module('unitApp')
 
     function calcPackGridxyMaxFillVisualSpaceFunction(parentContainer, childContainers, layout) {
 
-      childContainers = childContainers.filter(function(d) {
-        return Number(d['contents'][0][layout.size.key] > 0 );
+      childContainers = childContainers.filter(function (d) {
+        return Number(d['contents'][0][layout.size.key] > 0);
       });
 
-      childContainers.sort(function(c,d){ 
+      childContainers.sort(function (c, d) {
         return d['contents'][0][layout.size.key] - c['contents'][0][layout.size.key];
       });
 
-      var data = childContainers.map(function(d) {
-        return Number( d['contents'][0][layout.size.key] );
+      var data = childContainers.map(function (d) {
+        return Number(d['contents'][0][layout.size.key]);
       });
 
-      var coord = Treemap.generate( data, parentContainer.visualspace.width, parentContainer.visualspace.height );
+      var coord = Treemap.generate(data, parentContainer.visualspace.width, parentContainer.visualspace.height);
 
-      childContainers.forEach(function(c, i, all) {
+      childContainers.forEach(function (c, i, all) {
         var rect = coord[i];
         c.visualspace.width = rect[2] - rect[0];
         c.visualspace.height = rect[3] - rect[1];
@@ -228,7 +351,7 @@ angular.module('unitApp')
         c.visualspace.posY = rect[1]
         c.visualspace.padding = layout.padding;
       })
-      
+
     }
     function calcPackGridxyMaxFillVisualSpaceUniform(parentContainer, childContainers, layout) {
 
@@ -242,7 +365,7 @@ angular.module('unitApp')
 
       var combinations = getCombination(childContainers.length);
 
-      var combinationForWidthAndHeight = combinations.map(function(d) {
+      var combinationForWidthAndHeight = combinations.map(function (d) {
         return {
           'width': parentContainer.visualspace.width / d.a,
           'height': parentContainer.visualspace.height / d.b,
@@ -251,11 +374,11 @@ angular.module('unitApp')
         };
       });
 
-      combinationForWidthAndHeight.forEach(function(d) {
+      combinationForWidthAndHeight.forEach(function (d) {
         d.minEdge = (d.width > d.height) ? d.height : d.width;
       })
 
-      var minCombi = d3.scan(combinationForWidthAndHeight, function(a, b) {
+      var minCombi = d3.scan(combinationForWidthAndHeight, function (a, b) {
         return b.minEdge - a.minEdge;
       });
 
@@ -268,7 +391,7 @@ angular.module('unitApp')
     function getCombination(n) {
       var combi = d3.range(1, n + 1);
 
-      combi = combi.map(function(d) {
+      combi = combi.map(function (d) {
         return {
           'a': d,
           'b': Math.ceil(n / d)
@@ -296,12 +419,12 @@ angular.module('unitApp')
 
         var unitWidth = unitLength;
 
-        childContainers.forEach(function(c, i, all) {
+        childContainers.forEach(function (c, i, all) {
           c.visualspace.width = unitWidth * getValue(c, layout) - layout.margin.left - layout.margin.right;
 
           c.visualspace.height = parentVisualSpace.height - parentVisualSpace.padding.top - parentVisualSpace.padding.bottom - layout.margin.top - layout.margin.bottom;
 
-          
+
           c.visualspace.posY = parentVisualSpace.padding.top + layout.margin.top;
 
           c.visualspace.padding = layout.padding;
@@ -313,7 +436,7 @@ angular.module('unitApp')
 
         var unitHeight = unitLength;
 
-        childContainers.forEach(function(c, i, all) {
+        childContainers.forEach(function (c, i, all) {
           c.visualspace.height = unitHeight * getValue(c, layout) - layout.margin.top - layout.margin.bottom;
 
           c.visualspace.width = parentVisualSpace.width - parentVisualSpace.padding.left - parentVisualSpace.padding.right - layout.margin.left - layout.margin.right;
@@ -356,7 +479,7 @@ angular.module('unitApp')
           console.log('Unsupported Layout Direction', layout);
       }
 
-      var totalwidth = d3.sum(childContainers, function(c) {
+      var totalwidth = d3.sum(childContainers, function (c) {
         return c.visualspace.width + layout.margin.left + layout.margin.right;
       });
 
@@ -381,7 +504,7 @@ angular.module('unitApp')
           break;
       }
 
-      childContainers.forEach(function(c, i, all) {
+      childContainers.forEach(function (c, i, all) {
         var index = start + direction * i;
         if (i === 0) {
           all[index].visualspace.posX = offset + layout.margin.left;
@@ -418,7 +541,7 @@ angular.module('unitApp')
           console.log('Unsupported Layout Direction', layout);
       }
 
-      var totalheight = d3.sum(childContainers, function(c) {
+      var totalheight = d3.sum(childContainers, function (c) {
         return c.visualspace.height + layout.margin.top + layout.margin.bottom;
       });
 
@@ -443,7 +566,7 @@ angular.module('unitApp')
           break;
       }
 
-      childContainers.forEach(function(c, i, all) {
+      childContainers.forEach(function (c, i, all) {
         var index = start + direction * i;
         if (i === 0) {
           all[index].visualspace.posY = offset + layout.margin.top;
@@ -457,7 +580,7 @@ angular.module('unitApp')
 
     function getUnit(availableSpace, childContainers, layout) {
 
-      var sum = d3.sum(childContainers, function(d) {
+      var sum = d3.sum(childContainers, function (d) {
         return getValue(d, layout);
       });
       return availableSpace / sum;
@@ -469,7 +592,7 @@ angular.module('unitApp')
           return 1;
           break;
         case 'sum':
-          return d3.sum(container.contents, function(d) {
+          return d3.sum(container.contents, function (d) {
             return d[layout.size.key];
           });
           break;
@@ -494,8 +617,8 @@ angular.module('unitApp')
       var edgeInfo = calcEdgeInfo(parentContainer, childContainers, layout, aspect_ratio)
       applyEdgeInfo(parentContainer, childContainers, layout, edgeInfo);
     }
-    
-    function calcEdgeInfo(parentContainer, childContainers, layout, aspect_ratio){ 
+
+    function calcEdgeInfo(parentContainer, childContainers, layout, aspect_ratio) {
       if (isVerticalDirection(layout.direction)) {
         var edgeInfo = getRepetitionCountForFillingEdge(parentContainer.visualspace.width, parentContainer.visualspace.height, childContainers.length, aspect_ratio);
       } else {
@@ -504,16 +627,16 @@ angular.module('unitApp')
       return edgeInfo;
     }
 
-    function calcPackGridxyVisualSpaceWithUnitLength(parentContainer, childContainers, layout, unitLength)  {
-      switch(layout.aspect_ratio) {
+    function calcPackGridxyVisualSpaceWithUnitLength(parentContainer, childContainers, layout, unitLength) {
+      switch (layout.aspect_ratio) {
         case 'square':
-          childContainers.forEach(function(c, i, all) {
-            c.visualspace.width = Math.sqrt( unitLength * getValue(c, layout) ); 
-            c.visualspace.height = Math.sqrt( unitLength * getValue(c, layout) ); 
-            c.visualspace.posX = parentContainer.visualspace.padding.left + layout.margin.left + 0.5*( parentContainer.visualspace.width - c.visualspace.width  - parentContainer.visualspace.padding.left - parentContainer.visualspace.padding.right);
-            c.visualspace.posY = parentContainer.visualspace.padding.top + layout.margin.top + 0.5*(parentContainer.visualspace.height - c.visualspace.height - parentContainer.visualspace.padding.top - parentContainer.visualspace.padding.right)
+          childContainers.forEach(function (c, i, all) {
+            c.visualspace.width = Math.sqrt(unitLength * getValue(c, layout));
+            c.visualspace.height = Math.sqrt(unitLength * getValue(c, layout));
+            c.visualspace.posX = parentContainer.visualspace.padding.left + layout.margin.left + 0.5 * (parentContainer.visualspace.width - c.visualspace.width - parentContainer.visualspace.padding.left - parentContainer.visualspace.padding.right);
+            c.visualspace.posY = parentContainer.visualspace.padding.top + layout.margin.top + 0.5 * (parentContainer.visualspace.height - c.visualspace.height - parentContainer.visualspace.padding.top - parentContainer.visualspace.padding.right)
           });
-          
+
       }
     }
 
@@ -550,7 +673,7 @@ angular.module('unitApp')
           break;
       }
 
-      childContainers.forEach(function(c, i, all) {
+      childContainers.forEach(function (c, i, all) {
         c.visualspace.width = edgeInfo.remainingEdgeSideUnitLength;
         c.visualspace.height = edgeInfo.fillingEdgeSideUnitLength;
         c.visualspace.posX = xOrig + xInc * (Math.floor(i / numVerticalElement));
@@ -584,7 +707,7 @@ angular.module('unitApp')
           break;
       }
 
-      childContainers.forEach(function(c, i, all) {
+      childContainers.forEach(function (c, i, all) {
         c.visualspace.width = edgeInfo.fillingEdgeSideUnitLength;
         c.visualspace.height = edgeInfo.remainingEdgeSideUnitLength;
         c.visualspace.posX = xOrig + xInc * (i % numHoriElement);
@@ -652,7 +775,7 @@ angular.module('unitApp')
         case 'square':
         case 'parent':
         case 'custom':
-          minSizeItemIndex = d3.scan(shared_containers, function(a, b) {
+          minSizeItemIndex = d3.scan(shared_containers, function (a, b) {
             return a.visualspace.width - b.visualspace.width;
           });
           return {
@@ -661,14 +784,14 @@ angular.module('unitApp')
           };
           break;
         case 'maxfill':
-          var tempMinorSide = shared_containers.map(function(d) {
+          var tempMinorSide = shared_containers.map(function (d) {
             return (d.visualspace.width > d.visualspace.height) ? d.visualspace.height : d.visualspace.width;
           });
-          minSizeItemIndex = d3.scan(tempMinorSide, function(a, b) {
+          minSizeItemIndex = d3.scan(tempMinorSide, function (a, b) {
             return a - b;
           });
 
-          var minContainer = shared_containers.reduce(function(pre, cur) {
+          var minContainer = shared_containers.reduce(function (pre, cur) {
 
             var minPre, maxPre, minCur, maxCur;
 
@@ -710,7 +833,7 @@ angular.module('unitApp')
 
       var parentContainers = getParents(layout.sizeSharingGroup);
 
-      parentContainers.forEach(function(c) {
+      parentContainers.forEach(function (c) {
 
         var edgeInfo = buildEdgeInfoFromMinSize(c, minSize, layout);
 
@@ -721,13 +844,13 @@ angular.module('unitApp')
     function getParents(containers) {
       var mySet = new Set();
 
-      containers.forEach(function(d) {
+      containers.forEach(function (d) {
         mySet.add(d.parent);
       });
 
       var myArr = [];
 
-      mySet.forEach(function(d){ myArr.push(d);});
+      mySet.forEach(function (d) { myArr.push(d); });
       return myArr;
     }
 
@@ -799,7 +922,7 @@ angular.module('unitApp')
 
       var parentContainers = getParents(layout.sizeSharingGroup);
 
-      parentContainers.forEach(function(d) {
+      parentContainers.forEach(function (d) {
         switch (layout.aspect_ratio) {
           case 'fillX':
           case 'fillY':
@@ -817,7 +940,7 @@ angular.module('unitApp')
     function getMinUnitAmongContainers(layout) {
       var parentContainers = getParents(layout.sizeSharingGroup);
 
-      var minUnit = d3.min(parentContainers, function(d) {
+      var minUnit = d3.min(parentContainers, function (d) {
         var availableSpace = getAvailableSpace(d, layout);
         var unit = getUnit(availableSpace, d.contents, layout);
         return unit;
@@ -826,25 +949,25 @@ angular.module('unitApp')
     }
 
     function getAvailableSpace(container, layout) {
-      switch(layout.aspect_ratio) {
+      switch (layout.aspect_ratio) {
         case 'fillX':
           return container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
         case 'fillY':
           return container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
         case 'maxfill':
         case 'parent':
-          var width =  container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
+          var width = container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
           var height = container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
           return width * height;
         case 'square':
-          var width =  container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
+          var width = container.visualspace.width - container.visualspace.padding.left - container.visualspace.padding.right;
           var height = container.visualspace.height - container.visualspace.padding.top - container.visualspace.padding.bottom;
-          return Math.pow(d3.min([ width, height ]),2);
+          return Math.pow(d3.min([width, height]), 2);
       }
     }
 
     function makeSharedSizePack(layout) {
-      if (layout.size.type === 'uniform'){
+      if (layout.size.type === 'uniform') {
         var minSize = getMinAmongContainers(layout);
         applySharedSizeOnContainers(minSize, layout);
       } else {
@@ -891,7 +1014,7 @@ angular.module('unitApp')
     }
 
     function makeContainersForFlatten(container, layout) {
-      var leaves = container.contents.map(function(c, i) {
+      var leaves = container.contents.map(function (c, i) {
         return {
           'contents': [c],
           'label': i,
@@ -901,7 +1024,7 @@ angular.module('unitApp')
       });
 
       if (layout.hasOwnProperty('sort')) {
-        leaves.sort(function(a, b) {
+        leaves.sort(function (a, b) {
           var Avalue = a.contents[0][layout.sort.key];
           var Bvalue = b.contents[0][layout.sort.key];
 
@@ -923,8 +1046,8 @@ angular.module('unitApp')
 
       var newContainers = emptyContainersFromKeys(sharingDomain, layout.subgroup.key);
 
-      newContainers.forEach(function(c, i, all) {
-        c.contents = container.contents.filter(function(d) {
+      newContainers.forEach(function (c, i, all) {
+        c.contents = container.contents.filter(function (d) {
           return d[layout.subgroup.key] == c.label;
         });
         c.parent = container;
@@ -936,7 +1059,7 @@ angular.module('unitApp')
 
       var subgroup = layout.subgroup;
 
-      var extent = d3.extent(sharingDomain, function(d) {
+      var extent = d3.extent(sharingDomain, function (d) {
         return +d[subgroup.key];
       });
 
@@ -945,19 +1068,19 @@ angular.module('unitApp')
 
 
 
-      var nullGroup = container.contents.filter(function(d) {
+      var nullGroup = container.contents.filter(function (d) {
         return d[subgroup.key] == '';
 
       });
 
-      var valueGroup = container.contents.filter(function(d) {
+      var valueGroup = container.contents.filter(function (d) {
         return d[subgroup.key] != '';
       });
 
       var bins = d3.histogram()
         .domain(extent)
         .thresholds(tickArray)
-        .value(function(d) {
+        .value(function (d) {
           return +d[subgroup.key];
         })(valueGroup);
 
@@ -967,7 +1090,7 @@ angular.module('unitApp')
 
       var containers = nullGroup.concat(bins);
 
-      containers = containers.map(function(d) {
+      containers = containers.map(function (d) {
         return {
           'contents': d,
           'label': d.x0 + '-' + d.x1,
@@ -999,10 +1122,10 @@ angular.module('unitApp')
       if (isContainer(container)) {
 
         var leafs = [];
-        container.contents.forEach(function(c) {
+        container.contents.forEach(function (c) {
           var newLeaves = getSharingDomain(c);
 
-          newLeaves.forEach(function(d) {
+          newLeaves.forEach(function (d) {
             leafs.push(d);
           });
         });
@@ -1036,20 +1159,20 @@ angular.module('unitApp')
         .data([container])
         .enter().append('g')
         .attr('class', 'root')
-        .attr('transform', function(d) {
+        .attr('transform', function (d) {
           return 'translate(' + d.visualspace.posX + ', ' + d.visualspace.posY + ')';
         })
 
       var currentGroup = rootGroup;
-      layouts.forEach(function(layout) {
+      layouts.forEach(function (layout) {
 
         var tempGroup = currentGroup.selectAll('.' + layout.name)
-          .data(function(d) {
+          .data(function (d) {
             return d.contents;
           })
           .enter().append('g')
           .attr('class', layout.name)
-          .attr('transform', function(d) {
+          .attr('transform', function (d) {
 
             if (isNaN(d.visualspace.posX) || isNaN(d.visualspace.posY)) {
               console.log('NaN happened');
@@ -1061,34 +1184,34 @@ angular.module('unitApp')
         tempGroup.append('rect')
           .attr('x', 0)
           .attr('y', 0)
-          .attr('width', function(d) {
+          .attr('width', function (d) {
             return d.visualspace.width;
           })
-          .attr('height', function(d) {
+          .attr('height', function (d) {
             return d.visualspace.height;
           })
-          .style('opacity', function(d) {
+          .style('opacity', function (d) {
             if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('opacity')) {
               return layout.box.opacity;
             } else {
               return defaultSetting.layout.box.opacity;
             }
           })
-          .style('fill', function(d) {
+          .style('fill', function (d) {
             if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('fill')) {
               return layout.box.fill;
             } else {
               return defaultSetting.layout.box.fill;
             }
           })
-          .style('stroke', function(d) {
+          .style('stroke', function (d) {
             if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('stroke')) {
               return layout.box.stroke;
             } else {
               return defaultSetting.layout.box.stroke;
             }
           })
-          .style('stroke-width', function(d) {
+          .style('stroke-width', function (d) {
             if (layout.hasOwnProperty('box') && layout.box.hasOwnProperty('stroke-width')) {
               return layout.box['stroke-width'];
             } else {
@@ -1103,40 +1226,52 @@ angular.module('unitApp')
       switch (markPolicy.shape) {
         case "circle":
           var marks = currentGroup.append('circle')
-            .attr('cx', function(d) {
+            .attr('cx', function (d) {
               return d.visualspace.width / 2;
             })
-            .attr('cy', function(d) {
+            .attr('cy', function (d) {
               return d.visualspace.height / 2;
             })
-            .attr('r', function(d) {
+            .attr('r', function (d) {
               return calcRadius(d, container, markPolicy, layoutList);
             })
-            .style('fill', function(d) {
+            .style('fill', function (d) {
               return 'purple'
             });
           break;
 
         case "rect":
           var marks = currentGroup.append('rect')
-            .attr('x', function(d) {
+            .attr('x', function (d) {
               return 0;
             })
-            .attr('y', function(d) {
+            .attr('y', function (d) {
               return 0;
             })
-            .attr('width', function(d) {
+            .attr('width', function (d) {
               return d.visualspace.width;
             })
-            .attr('height', function(d) {
+            .attr('height', function (d) {
               return d.visualspace.height;
             })
-            .style('fill', function(d) {
+            .style('fill', function (d) {
               return 'purple'
             });;
           break;
         default:
-          console.log('You should not see this');
+          var marks = currentGroup.append('circle')
+            .attr('cx', function (d) {
+              return d.visualspace.width / 2;
+            })
+            .attr('cy', function (d) {
+              return d.visualspace.height / 2;
+            })
+            .attr('r', function (d) {
+              return calcRadius(d, container, markPolicy, layoutList);
+            })
+            .style('fill', function (d) {
+              return 'purple'
+            });
           break;
 
 
@@ -1149,8 +1284,9 @@ angular.module('unitApp')
     function setMarksColor(marks, rootContainer, markPolicy, layoutList) {
       var leafContainersArr = buildLeafContainersArr(rootContainer, layoutList.head);
       var color;
+      color = d3.scaleOrdinal(d3.schemeCategory10);
       if (markPolicy.color.type === 'categorical') {
-        color = d3.scaleOrdinal(d3.schemeCategory10);
+
       } else {
         console.log('TODO');
       }
@@ -1158,7 +1294,7 @@ angular.module('unitApp')
         color("YES");
         color("NO");
       }
-      marks.style('fill', function(d) {
+      marks.style('fill', function (d) {
         return color(d.contents[0][markPolicy.color.key]);
       });
     }
@@ -1189,7 +1325,7 @@ angular.module('unitApp')
       var radius;
       var leafContainersArr = buildLeafContainersArr(rootContainer, layoutList.head);
 
-      return d3.min(leafContainersArr, function(d) {
+      return d3.min(leafContainersArr, function (d) {
         return calcRadiusIsolated(d, markPolicy);
       });
     }
@@ -1199,10 +1335,10 @@ angular.module('unitApp')
       if (layout.child !== 'EndOfLayout') {
 
         var leafs = [];
-        container.contents.forEach(function(c) {
+        container.contents.forEach(function (c) {
           var newLeaves = buildLeafContainersArr(c, layout.child);
 
-          newLeaves.forEach(function(d) {
+          newLeaves.forEach(function (d) {
             leafs.push(d);
           });
         });

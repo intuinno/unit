@@ -1,0 +1,44 @@
+{
+  "data": "data/titanic3.csv",
+  "layouts": [{
+      "subgroup": {
+        "type": "groupby",
+        "key": "pclass"
+      },
+      "aspect_ratio": "fillX"
+    },
+    {
+      "subgroup": {
+        "type": "bin",
+        "key": "age",
+        "numBin": 20
+      },
+      "aspect_ratio": "fillY"
+    },
+    {
+      "subgroup": {
+        "type": "passthrough"
+      },
+      "aspect_ratio": "fillX",
+      "size": {
+        "type": "count"
+      },
+      "align": "center"
+    },
+    {
+      "subgroup": {
+        "type": "flatten"
+      },
+      "aspect_ratio": "maxfill",
+      "size": {
+        "isShared": false
+      }
+    }
+  ],
+  "mark": {
+    "color": {
+      "key": "survived_text",
+      "type": "categorical"
+    }
+  }
+}

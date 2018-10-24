@@ -1,0 +1,16 @@
+{
+    "data": "data/titanic3.csv",
+    "layouts": [ 
+      {
+        "subgroup": {
+          "type": "flatten"
+        }
+      }
+    ],
+    "mark": {
+        "color": {
+          "key": "survived_text",
+          "type": "categorical"
+        }
+    }
+}

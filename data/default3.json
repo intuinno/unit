@@ -1,0 +1,25 @@
+{
+    "data": "data/titanic3.csv",
+    "layouts": [
+        {
+            "subgroup": {
+              "type": "groupby",
+              "key": "pclass"
+            },
+            "aspect_ratio": "fillX"
+          },  
+
+      {
+        "subgroup": {
+          "type": "flatten"
+        },
+        "aspect_ratio": "maxfill"
+      }
+    ],
+    "mark": {
+        "color": {
+          "key": "survived_text",
+          "type": "categorical"
+        }
+    }
+}
